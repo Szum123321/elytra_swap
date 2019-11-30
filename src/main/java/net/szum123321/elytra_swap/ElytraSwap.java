@@ -7,6 +7,7 @@ public class ElytraSwap implements ModInitializer {
 
     @Override
     public void onInitialize() {
+        System.out.println("Loading Elytra Swap by Szum123321");
     }
 
 }

@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Entity.class)
-public abstract class PlayerCapture  {
+public abstract class PlayerCapture {
     @Shadow
     public World world;
 
@@ -24,11 +24,28 @@ public abstract class PlayerCapture  {
 
     @Inject(at = @At("HEAD"), method = "fall")
     private void fallingHanlder(double heightDifference, boolean onGround, BlockState landedState, BlockPos landedPosition, CallbackInfo info){
-        if((Object)this instanceof PlayerEntity && !onGround) {
-            if (heightDifference < 0 && getFallHeight(landedPosition) > 5) {
-                PlayerEntity player = (PlayerEntity) (Object) this;
+        if((Object)this instanceof PlayerEntity) {
+            PlayerEntity player = (PlayerEntity) (Object) this;
 
-                replaceArmorWithElytra(player);
+            if(!onGround){
+                if (heightDifference < 0 && getFallHeight(landedPosition) > 5) {
+                    replaceArmorWithElytra(player);
+                }
+            }else{
+                replaceElytraWithArmor(player);
+            }
+        }
+    }
+
+    private void replaceElytraWithArmor(PlayerEntity player){
+        if(player.inventory.armor.get(2).getItem() == Items.ELYTRA){
+            for(int i = 0; i < player.inventory.main.size(); i++){
+                if(player.inventory.main.get(i).getItem().getName().getString().toLowerCase().contains("chestplate")){  //kinda sketchy but should make this compatible with modded armor
+                    ItemStack elytra = player.inventory.armor.get(2);
+
+                    player.inventory.armor.set(2, player.inventory.main.get(i));
+                    player.inventory.main.set(i, elytra);
+                }
             }
         }
     }
@@ -41,7 +58,7 @@ public abstract class PlayerCapture  {
                 player.inventory.armor.set(2, player.inventory.main.get(i));
                 player.inventory.main.set(i, chestplate);
 
-                this.setFlag(7, true);
+                this.setFlag(7, true); // thanks to this line you do not have to press space in order to start gliding
 
                 return;
             }
@@ -51,10 +68,16 @@ public abstract class PlayerCapture  {
     private int getFallHeight(BlockPos currentPosition){
         int height = currentPosition.getY();
 
-        while(world.getBlockState(new BlockPos(currentPosition.getX(), height, currentPosition.getZ())).getBlock() == Blocks.AIR && height > 0){
+        while(world.getBlockState(new BlockPos(currentPosition.getX(), height, currentPosition.getZ())).getBlock() == Blocks.AIR && height > -1){
             height--;
+        }
+
+        if(height <= -1){
+            System.out.println("WTF! Why are you trying to glide below bedrock?");
+            return -Math.abs(currentPosition.getY()) * 2; //even if you would fly below bedrock it should work :)
         }
 
         return currentPosition.getY() - height;
     }
+
 }
