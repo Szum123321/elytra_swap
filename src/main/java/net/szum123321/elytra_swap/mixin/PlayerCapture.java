@@ -76,7 +76,6 @@ public abstract class PlayerCapture {
             System.out.println("WTF! Why are you trying to glide below bedrock?");
             return -Math.abs(currentPosition.getY()) * 2; //even if you would fly below bedrock it should work :)
         }
-
         return currentPosition.getY() - height;
     }
 
