@@ -4,9 +4,8 @@ import net.fabricmc.fabric.api.event.player.UseItemCallback;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.FireworkEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -23,15 +22,15 @@ public class TakeOffHandler {
                     world.spawnEntity(new FireworkEntity(world, player.getMainHandStack(), player));
                 }
             }
-            return TypedActionResult.pass(ItemStack.EMPTY);
+            return ActionResult.PASS;
         });
     }
 
     private static boolean checkSpaceOverPlayer(PlayerEntity player, int requiredHeight){
         World world = player.world;
 
-        for(int i = (int)player.getY(); i <= (int)player.getY() + requiredHeight; i++){
-            if(world.getBlockState(new BlockPos(player.getX(), i ,player.getZ())).getBlock() != Blocks.AIR){
+        for(int i = (int)player.y; i <= (int)player.y + requiredHeight; i++){
+            if(world.getBlockState(new BlockPos(player.x, i ,player.z)).getBlock() != Blocks.AIR){
                 return false;
             }
         }
