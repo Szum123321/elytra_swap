@@ -6,6 +6,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
@@ -24,7 +25,7 @@ public abstract class PlayerCapture {
 
     @Inject(at = @At("HEAD"), method = "fall")
     private void fallingHanlder(double heightDifference, boolean onGround, BlockState landedState, BlockPos landedPosition, CallbackInfo info){
-        if((Object)this instanceof PlayerEntity) {
+        if((Object)this instanceof ServerPlayerEntity) {
             PlayerEntity player = (PlayerEntity) (Object) this;
 
             if(!onGround){
@@ -40,7 +41,7 @@ public abstract class PlayerCapture {
     private void replaceElytraWithArmor(PlayerEntity player){
         if(player.inventory.armor.get(2).getItem() == Items.ELYTRA){
             for(int i = 0; i < player.inventory.main.size(); i++){
-                if(player.inventory.main.get(i).getItem().getName().getString().toLowerCase().contains("chestplate")){  //kinda sketchy but should make this compatible with modded armor
+                if(player.inventory.main.get(i).getItem().toString().toLowerCase().contains("chestplate")){  //kinda sketchy but should make this compatible with modded armor
                     ItemStack elytra = player.inventory.armor.get(2);
 
                     player.inventory.armor.set(2, player.inventory.main.get(i));

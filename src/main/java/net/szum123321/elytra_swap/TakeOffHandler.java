@@ -15,7 +15,8 @@ public class TakeOffHandler {
         UseItemCallback.EVENT.register((player, world, hand) -> {
             if(player.getMainHandStack().getItem() == Items.FIREWORK_ROCKET  && checkIfPlayerHasElytra(player)){
                 if(checkSpaceOverPlayer(player, 15) && player.onGround){
-                    player.getMainHandStack().decrement(1);
+                    if(!player.isCreative())
+                        player.getMainHandStack().decrement(1);
 
                     player.addVelocity(0.0, 1.5, 0.0);
 
