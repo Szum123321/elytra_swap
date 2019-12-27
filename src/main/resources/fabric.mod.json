@@ -20,6 +20,9 @@
   "entrypoints": {
     "main": [
       "net.szum123321.elytra_swap.ElytraSwap"
+    ],
+    "client": [
+      "net.szum123321.elytra_swap.ElytraSwapClientInit"
     ]
   },
   "mixins": [

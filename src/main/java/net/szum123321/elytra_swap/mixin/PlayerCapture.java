@@ -52,14 +52,14 @@ public abstract class PlayerCapture {
     }
 
     private void replaceArmorWithElytra(PlayerEntity player){
+        this.setFlag(7, true); // thanks to this line you do not have to press space in order to start gliding
+
         for (int i = 0; i < player.inventory.main.size(); i++){
             if(player.inventory.main.get(i).getItem() == Items.ELYTRA){
                 ItemStack chestplate = player.inventory.armor.get(2);
 
                 player.inventory.armor.set(2, player.inventory.main.get(i));
                 player.inventory.main.set(i, chestplate);
-
-                this.setFlag(7, true); // thanks to this line you do not have to press space in order to start gliding
 
                 return;
             }
