@@ -22,7 +22,7 @@
       "net.szum123321.elytra_swap.ElytraSwap"
     ],
     "client": [
-      "net.szum123321.elytra_swap.ElytraSwapClientInit"
+      "net.szum123321.elytra_swap.client.ElytraSwapClientInit"
     ]
   },
   "mixins": [
@@ -32,7 +32,8 @@
   "depends": {
     "fabricloader": ">=0.4.0",
     "fabric": "*",
-    "minecraft": "1.15.x"
+    "minecraft": "1.15.x",
+    "cotton-config": "*"
   },
   "suggests": {
     "flamingo": "*"

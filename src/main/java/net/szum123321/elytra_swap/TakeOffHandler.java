@@ -16,28 +16,34 @@ import net.minecraft.util.math.BlockPos;
 public class TakeOffHandler {
     public static void onItemUseRegister(){
         UseItemCallback.EVENT.register((player, world, hand) -> {
-            if(player.getMainHandStack().getItem() == Items.FIREWORK_ROCKET  && checkIfPlayerHasElytra(player) && player instanceof ServerPlayerEntity){
-                if(checkSpaceOverPlayer(player, 15) && player.onGround){
-                    boolean canExecute = true;
+            if(player.getMainHandStack().getItem() == Items.FIREWORK_ROCKET  && checkIfPlayerHasElytra(player) && player instanceof ServerPlayerEntity &&
+               checkSpaceOverPlayer(player, 15) && player.onGround && PlayerSwapDataHandler.get(player)){
 
-                    if(world.isClient){  //When server is local (a.k.a singleplayer)
-                        player.addVelocity(-Math.sin(Math.toRadians(player.yaw)) * 1.2, 1.5, Math.cos(Math.toRadians(player.yaw)) * 1.2);
-                    }else { //Server is remote
-                        if (ServerSidePacketRegistry.INSTANCE.canPlayerReceive(player, ElytraSwap.KICK_PLAYER_INTO_AIR)) {  //player has mod installed
-                            PacketByteBuf passedData = new PacketByteBuf(Unpooled.buffer());
-                            ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, ElytraSwap.KICK_PLAYER_INTO_AIR, passedData);
+                boolean canExecute = true;
+
+                if(world.isClient){  //When server is local (a.k.a singleplayer)
+                    player.addVelocity(-Math.sin(Math.toRadians(player.yaw)) * ElytraSwap.config.kickSpeed, ElytraSwap.config.kickSpeed, Math.cos(Math.toRadians(player.yaw)) * ElytraSwap.config.kickSpeed);
+                }else { //Server is remote
+                    if (ServerSidePacketRegistry.INSTANCE.canPlayerReceive(player, ElytraSwap.DUMMY_PACKAGE)) {  //player has mod installed
+                        PacketByteBuf passedData = new PacketByteBuf(Unpooled.buffer());
+                        passedData.writeFloat(ElytraSwap.config.kickSpeed);
+                        ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, ElytraSwap.KICK_PLAYER_INTO_AIR, passedData);
+                    }else{
+                        if(ElytraSwap.config.noModPlayersHandlingMethode == 1){
+                            player.teleport(player.getX(), player.getY() + (ElytraSwap.config.kickSpeed * 10), player.getZ());
                         }else{
                             canExecute = false;
                         }
                     }
-
-                    if(canExecute){
-                        world.spawnEntity(new FireworkEntity(world, player.getMainHandStack(), player));
-
-                        if(!player.isCreative())
-                            player.getMainHandStack().decrement(1);
-                    }
                 }
+
+                if(canExecute){
+                    world.spawnEntity(new FireworkEntity(world, player.getMainHandStack(), player));
+
+                    if(!player.isCreative())
+                        player.getMainHandStack().decrement(1);
+                }
+
             }
             return TypedActionResult.pass(ItemStack.EMPTY);
         });
