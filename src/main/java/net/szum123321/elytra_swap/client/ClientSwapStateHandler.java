@@ -7,7 +7,7 @@ import java.io.*;
 import java.util.Scanner;
 
 public class ClientSwapStateHandler {
-    private Boolean state;
+    private boolean state;
 
     public boolean get(){
         return state;

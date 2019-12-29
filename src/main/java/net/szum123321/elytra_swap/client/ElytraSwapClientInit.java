@@ -16,9 +16,11 @@ import org.lwjgl.glfw.GLFW;
 
 public class ElytraSwapClientInit implements ClientModInitializer {
     private static FabricKeyBinding enableSwap;
-    private Boolean lastState = false;
+    private boolean lastState = false;
 
     public static ClientSwapStateHandler swapStateHandler;
+
+    public static boolean serverHasMod = false;
 
     @Override
     public void onInitializeClient() {
@@ -42,14 +44,16 @@ public class ElytraSwapClientInit implements ClientModInitializer {
         KeyBindingRegistry.INSTANCE.register(enableSwap);
 
         ClientTickCallback.EVENT.register(e -> {
-            if(enableSwap.isPressed()){
+            if(enableSwap.isPressed() && serverHasMod){
                 if(!lastState){
                     swapStateHandler.set(!swapStateHandler.get());
+                    lastState = true;
+
                     e.player.sendMessage(new TranslatableText("Elytra Swap in now %s", swapStateHandler.get() ? "Enabled" : "Disabled"));
+
                     PacketByteBuf passedData = new PacketByteBuf(Unpooled.buffer());
                     passedData.writeBoolean(swapStateHandler.get());
                     ClientSidePacketRegistry.INSTANCE.sendToServer(ElytraSwap.SET_SWAP_ENABLE, passedData);
-                    lastState = true;
                 }
             }else{
                 lastState = false;
@@ -67,7 +71,7 @@ public class ElytraSwapClientInit implements ClientModInitializer {
         });
 
         ClientSidePacketRegistry.INSTANCE.register(ElytraSwap.DUMMY_PACKAGE, ((packetContext, packetByteBuf) -> {
-            System.out.println("PING!");
+            ;
         }));
     }
 }

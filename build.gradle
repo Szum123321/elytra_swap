@@ -26,8 +26,6 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modCompile "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	//modCompile "io.github.cottonmc:Jankson:1.0.0+j1.1.2"
-
 	modCompile "io.github.cottonmc.cotton:cotton-config:${project.cotton_version}"
 	include "io.github.cottonmc.cotton:cotton-config:${project.cotton_version}"
 

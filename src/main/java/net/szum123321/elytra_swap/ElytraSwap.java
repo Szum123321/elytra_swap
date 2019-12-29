@@ -4,10 +4,7 @@ import io.github.cottonmc.cotton.config.ConfigManager;
 import io.github.cottonmc.cotton.logging.ModLogger;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.util.Identifier;
-
-import java.nio.file.Path;
 
 public class ElytraSwap implements ModInitializer {
     public static final String MOD_ID = "elytra_swap";
@@ -25,8 +22,6 @@ public class ElytraSwap implements ModInitializer {
 
         config = ConfigManager.loadConfig(ConfigHandler.class);
 
-        TakeOffHandler.onItemUseRegister();
-
         registerSwapToggle();
     }
 
@@ -42,6 +37,10 @@ public class ElytraSwap implements ModInitializer {
                 }
             });
         });
+
+        ServerSidePacketRegistry.INSTANCE.register(ElytraSwap.DUMMY_PACKAGE, ((packetContext, packetByteBuf) -> {
+            ;
+        }));
     }
 }
 

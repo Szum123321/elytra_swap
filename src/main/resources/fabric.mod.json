@@ -4,13 +4,13 @@
   "version": "${version}",
 
   "name": "Elytra Swap",
-  "description": "This mod automatically swaps your main armour with elytra when falling",
+  "description": "This mod automatically swaps your main armor with elytra when falling",
   "authors": [
     "Szum123321"
   ],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/elytra-swap",
+    "sources": "https://github.com/Szum123321/elytra_swap"
   },
 
   "license": "GPL-3",

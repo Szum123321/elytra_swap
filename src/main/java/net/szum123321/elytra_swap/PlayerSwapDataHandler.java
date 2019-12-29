@@ -20,7 +20,7 @@ public class PlayerSwapDataHandler {
         data.replace(player.getName().asString(), val);
     }
 
-    public static boolean get (PlayerEntity player){
+    public static boolean get(PlayerEntity player){
         if(isMapped(player)){
             return data.get(player.getName().asString());
         }else{
