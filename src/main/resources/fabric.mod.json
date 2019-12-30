@@ -26,7 +26,7 @@
     ]
   },
   "mixins": [
-    "modid.mixins.json"
+    "elytra_swap.mixins.json"
   ],
 
   "depends": {

@@ -26,8 +26,11 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modCompile "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	modCompile "io.github.cottonmc.cotton:cotton-config:${project.cotton_version}"
-	include "io.github.cottonmc.cotton:cotton-config:${project.cotton_version}"
+	modCompile "io.github.cottonmc.cotton:cotton-config:1.0.0-rc.7"
+
+	include "io.github.cottonmc:Jankson-Fabric:2.0.0+j1.2.0"
+	include "io.github.cottonmc.cotton:cotton-logging:1.0.0-rc.4"
+	include "io.github.cottonmc.cotton:cotton-config:1.0.0-rc.7"
 
 	// PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
 	// You may need to force-
