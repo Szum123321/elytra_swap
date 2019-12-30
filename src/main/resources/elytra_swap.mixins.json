@@ -3,9 +3,11 @@
   "package": "net.szum123321.elytra_swap.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "PlayerCapture"
+    "PlayerFallCapture",
+    "TakeOffHandler"
   ],
   "client": [
+    "ClientServerJoin"
   ],
   "injectors": {
     "defaultRequire": 1
