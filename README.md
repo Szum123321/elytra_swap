@@ -1,7 +1,7 @@
 ##Elytra Swap
 
-[![Downloads](https://cf.way2muchnoise.eu/full_353164_downloads.svg)
-![Available for]( https://cf.way2muchnoise.eu/versions/353164.svg)](https://www.curseforge.com/minecraft/mc-mods/elytra-swap)
+[![Downloads](http://cf.way2muchnoise.eu/full_353164_downloads.svg)
+![Available for](http://cf.way2muchnoise.eu/versions/353164.svg)](https://www.curseforge.com/minecraft/mc-mods/elytra-swap)
 
 It automatically swaps your current chestplate with elytra if one is found in your inventory and back when landing.
 Also you can takeoff by just clicking in the air with firework rocket!
