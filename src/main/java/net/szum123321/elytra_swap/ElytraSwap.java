@@ -4,12 +4,16 @@ import io.github.cottonmc.cotton.config.ConfigManager;
 import io.github.cottonmc.cotton.logging.ModLogger;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
+import net.fabricmc.fabric.api.registry.CommandRegistry;
+import net.minecraft.server.command.CommandManager;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
+import net.szum123321.elytra_swap.command.SwapEnableArgumentType;
+import net.szum123321.elytra_swap.command.SwapEnablementCommandRegister;
 
 public class ElytraSwap implements ModInitializer {
     public static final String MOD_ID = "elytra_swap";
 
-    public static final Identifier KICK_PLAYER_INTO_AIR = new Identifier(MOD_ID, "kick");
     public static final Identifier SET_SWAP_ENABLE = new Identifier(MOD_ID, "set_swap");
     public static final Identifier DUMMY_PACKAGE = new Identifier(MOD_ID, "dummy");
 
@@ -23,6 +27,8 @@ public class ElytraSwap implements ModInitializer {
         config = ConfigManager.loadConfig(ConfigHandler.class);
 
         registerSwapToggle();
+
+        SwapEnablementCommandRegister.register();
     }
 
     private void registerSwapToggle(){
@@ -38,9 +44,7 @@ public class ElytraSwap implements ModInitializer {
             });
         });
 
-        ServerSidePacketRegistry.INSTANCE.register(ElytraSwap.DUMMY_PACKAGE, ((packetContext, packetByteBuf) -> {
-            ;
-        }));
+        ServerSidePacketRegistry.INSTANCE.register(ElytraSwap.DUMMY_PACKAGE, ((packetContext, packetByteBuf) -> {}));
     }
 }
 

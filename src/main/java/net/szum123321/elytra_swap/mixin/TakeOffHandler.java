@@ -1,7 +1,7 @@
 package net.szum123321.elytra_swap.mixin;
 
-import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
+import net.minecraft.client.network.packet.EntityVelocityUpdateS2CPacket;
 import net.minecraft.entity.FireworkEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.FireworkItem;
@@ -10,8 +10,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Hand;
-import net.minecraft.util.PacketByteBuf;
+import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.szum123321.elytra_swap.ElytraSwap;
 import net.szum123321.elytra_swap.PlayerSwapDataHandler;
@@ -26,30 +27,14 @@ public abstract class TakeOffHandler extends Item {
         super(settings);
     }
 
-    @Inject(method = "use", at = @At(value = "HEAD"))
-    private void fireworkUsageHandler(World world, PlayerEntity player, Hand hand, CallbackInfoReturnable<ItemStack> ci){
+    @Inject(method = "use", at = @At("HEAD"))
+    private void fireworkUsageHandler(World world, PlayerEntity player, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> ci){
         if(player instanceof ServerPlayerEntity && checkIfPlayerHasElytra(player) && checkSpaceOverPlayer(player, 15) &&
-                player.onGround && PlayerSwapDataHandler.get(player)){
+                player.onGround && PlayerSwapDataHandler.get(player) && !player.isFallFlying()){
 
-            boolean canExecute = true;
+            if(ServerSidePacketRegistry.INSTANCE.canPlayerReceive(player, ElytraSwap.DUMMY_PACKAGE) || ElytraSwap.config.noModPlayersHandlingMethod == 1){
+                ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, new EntityVelocityUpdateS2CPacket(player.getEntityId(), new Vec3d(-Math.sin(Math.toRadians(player.yaw)) * ElytraSwap.config.kickSpeed, ElytraSwap.config.kickSpeed, Math.cos(Math.toRadians(player.yaw)) * ElytraSwap.config.kickSpeed)));
 
-            if(world.isClient){  //When server is local (a.k.a singleplayer)
-                player.addVelocity(-Math.sin(Math.toRadians(player.yaw)) * ElytraSwap.config.kickSpeed, ElytraSwap.config.kickSpeed, Math.cos(Math.toRadians(player.yaw)) * ElytraSwap.config.kickSpeed);
-            }else { //Server is remote
-                if (ServerSidePacketRegistry.INSTANCE.canPlayerReceive(player, ElytraSwap.DUMMY_PACKAGE)) {  //player has mod installed
-                    PacketByteBuf passedData = new PacketByteBuf(Unpooled.buffer());
-                    passedData.writeFloat(ElytraSwap.config.kickSpeed);
-                    ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, ElytraSwap.KICK_PLAYER_INTO_AIR, passedData);
-                }else{
-                    if(ElytraSwap.config.noModPlayersHandlingMethod == 1){
-                        player.teleport(player.x, player.y + (ElytraSwap.config.kickSpeed * 10), player.z);
-                    }else{
-                        canExecute = false;
-                    }
-                }
-            }
-
-            if(canExecute){
                 world.spawnEntity(new FireworkEntity(world, player.getMainHandStack(), player));
 
                 if(!player.isCreative())

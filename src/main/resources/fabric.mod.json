@@ -34,8 +34,5 @@
     "fabric": "*",
     "minecraft": "1.14.4",
     "cotton-config": "*"
-  },
-  "suggests": {
-    "flamingo": "*"
   }
 }

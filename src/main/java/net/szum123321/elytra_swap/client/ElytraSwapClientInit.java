@@ -7,7 +7,6 @@ import net.fabricmc.fabric.api.client.keybinding.KeyBindingRegistry;
 import net.fabricmc.fabric.api.event.client.ClientTickCallback;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.PacketByteBuf;
@@ -49,7 +48,8 @@ public class ElytraSwapClientInit implements ClientModInitializer {
                     swapStateHandler.set(!swapStateHandler.get());
                     lastState = true;
 
-                    e.player.sendMessage(new TranslatableText("Elytra Swap in now %s", swapStateHandler.get() ? "Enabled" : "Disabled"));
+                    if(e.player != null)
+                        e.player.sendMessage(new TranslatableText("Elytra Swap in now %s", swapStateHandler.get() ? "Enabled" : "Disabled"));
 
                     PacketByteBuf passedData = new PacketByteBuf(Unpooled.buffer());
                     passedData.writeBoolean(swapStateHandler.get());
@@ -62,16 +62,8 @@ public class ElytraSwapClientInit implements ClientModInitializer {
     }
 
     private void registerPackets(){
-        ClientSidePacketRegistry.INSTANCE.register(ElytraSwap.KICK_PLAYER_INTO_AIR, (packetContext, attachedData) -> {
-            float speed = attachedData.readFloat();
-            packetContext.getTaskQueue().execute(() -> {
-                PlayerEntity player = packetContext.getPlayer();
-                player.addVelocity(-Math.sin(Math.toRadians(player.yaw)) * speed, speed, Math.cos(Math.toRadians(player.yaw)) * speed);
-            });
-        });
-
         ClientSidePacketRegistry.INSTANCE.register(ElytraSwap.DUMMY_PACKAGE, ((packetContext, packetByteBuf) -> {
-            ;
+
         }));
     }
 }
