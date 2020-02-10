@@ -10,7 +10,7 @@ This functionality can be enabled and disabled by just clicking p.
 
 Mod needs is required on both server and client!
 
-Requires Fabric API.
+#### Requires Fabric API.
 
 Feel free to use this mod in modpacks and on servers!
 
