@@ -34,24 +34,21 @@ public abstract class PlayerFallCapture extends LivingEntity {
                 if(!PlayerSwapDataHandler.get(player))
                     return;
 
-                if(!onGround){
+                if(!onGround && !player.isClimbing()){
                     if (PlayerSwapDataHandler.get(player) && heightDifference < 0 && getFallHeight(landedPosition) > 5 && (ServerSidePacketRegistry.INSTANCE.canPlayerReceive(player, ElytraSwap.DUMMY_PACKAGE) || ElytraSwap.config.noModPlayersHandlingMethod > 0)) {
                         replaceArmorWithElytra(player);
-                        setSevenFlagState(true);    // thanks to this line you do not have to press space in order to start gliding
+                        setFlag(7, true);    // thanks to this line you do not have to press space in order to start gliding
                     }
                 }else if(PlayerSwapDataHandler.get(player) && (ServerSidePacketRegistry.INSTANCE.canPlayerReceive(player, ElytraSwap.DUMMY_PACKAGE) || ElytraSwap.config.noModPlayersHandlingMethod > 0)){
                     replaceElytraWithArmor(player);
-                    setSevenFlagState(false);
+                    setFlag(7, false);
                 }
             }
         }
     }
 
-    private void setSevenFlagState(boolean val){
-        setFlag(7, val);
-    }
-
     private void replaceElytraWithArmor(PlayerEntity player){
+        //ElytraSwap.LOGGER.all("Armour size: " + player.inventory.armor.size());
         if(player.inventory.armor.get(2).getItem() == Items.ELYTRA){
             for(int i = 0; i < player.inventory.main.size(); i++){
                 if(player.inventory.main.get(i).getItem().toString().toLowerCase().contains("chestplate")){  //kinda sketchy but should make this compatible with modded armor
@@ -64,6 +61,7 @@ public abstract class PlayerFallCapture extends LivingEntity {
     }
 
     private void replaceArmorWithElytra(PlayerEntity player){
+        //ElytraSwap.LOGGER.all("Armour size: " + player.inventory.armor.size());
         for (int i = 0; i < player.inventory.main.size(); i++){
             if(player.inventory.main.get(i).getItem() == Items.ELYTRA){
                 ItemStack chestplate = player.inventory.armor.get(2);
@@ -91,6 +89,7 @@ public abstract class PlayerFallCapture extends LivingEntity {
     }
 
     private boolean checkIfPlayerHasElytra(PlayerEntity player){
+        //ElytraSwap.LOGGER.all("Armour size: " + player.inventory.armor.size());
         return player.inventory.contains(new ItemStack(Items.ELYTRA));
     }
 }

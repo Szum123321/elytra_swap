@@ -44,8 +44,8 @@ public abstract class TakeOffHandler extends Item {
     }
 
     private static boolean checkSpaceOverPlayer(PlayerEntity player, int requiredHeight){
-        for(int i = (int)player.y; i <= (int)player.y + requiredHeight; i++){
-            if(player.world.getBlockState(new BlockPos(player.x, i, player.z)).getMaterial().isSolid())
+        for(int i = (int)player.getY(); i <= (int)player.getY() + requiredHeight; i++){
+            if(player.world.getBlockState(new BlockPos(player.getX(), i, player.getZ())).getMaterial().isSolid())
                 return false;
         }
 
