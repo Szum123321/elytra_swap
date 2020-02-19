@@ -15,7 +15,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.szum123321.elytra_swap.ElytraSwap;
-import net.szum123321.elytra_swap.PlayerSwapDataHandler;
+import net.szum123321.elytra_swap.core.PlayerSwapDataHandler;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -29,7 +29,7 @@ public abstract class TakeOffHandler extends Item {
 
     @Inject(method = "use", at = @At("HEAD"))
     private void fireworkUsageHandler(World world, PlayerEntity player, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> ci){
-        if(player instanceof ServerPlayerEntity && checkIfPlayerHasElytra(player) && checkSpaceOverPlayer(player, 15) &&
+        if(player instanceof ServerPlayerEntity && ElytraSwap.tc.doesPlayerHaveElytra(player) && checkSpaceOverPlayer(player, 15) &&
                 player.onGround && PlayerSwapDataHandler.get(player) && !player.isFallFlying()){
 
             if(ServerSidePacketRegistry.INSTANCE.canPlayerReceive(player, ElytraSwap.DUMMY_PACKAGE) || ElytraSwap.config.noModPlayersHandlingMethod == 1){
@@ -50,9 +50,5 @@ public abstract class TakeOffHandler extends Item {
         }
 
         return true;
-    }
-
-    private static boolean checkIfPlayerHasElytra(PlayerEntity player){
-        return player.inventory.contains(new ItemStack(Items.ELYTRA));
     }
 }

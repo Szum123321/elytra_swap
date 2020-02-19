@@ -1,4 +1,4 @@
-package net.szum123321.elytra_swap;
+package net.szum123321.elytra_swap.core;
 
 import net.minecraft.entity.player.PlayerEntity;
 

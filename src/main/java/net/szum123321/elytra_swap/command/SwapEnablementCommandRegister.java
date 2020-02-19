@@ -6,7 +6,7 @@ import net.fabricmc.fabric.api.registry.CommandRegistry;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.TranslatableText;
-import net.szum123321.elytra_swap.PlayerSwapDataHandler;
+import net.szum123321.elytra_swap.core.PlayerSwapDataHandler;
 
 public class SwapEnablementCommandRegister {
     public static void register(){

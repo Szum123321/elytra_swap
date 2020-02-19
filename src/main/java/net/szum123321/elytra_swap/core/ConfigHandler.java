@@ -1,7 +1,8 @@
-package net.szum123321.elytra_swap;
+package net.szum123321.elytra_swap.core;
 
 import blue.endless.jankson.Comment;
 import io.github.cottonmc.cotton.config.annotations.ConfigFile;
+import net.szum123321.elytra_swap.ElytraSwap;
 
 @ConfigFile(name = ElytraSwap.MOD_ID)
 public class ConfigHandler {

@@ -4,12 +4,12 @@ import io.github.cottonmc.cotton.config.ConfigManager;
 import io.github.cottonmc.cotton.logging.ModLogger;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
-import net.fabricmc.fabric.api.registry.CommandRegistry;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.text.TranslatableText;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.util.Identifier;
-import net.szum123321.elytra_swap.command.SwapEnableArgumentType;
 import net.szum123321.elytra_swap.command.SwapEnablementCommandRegister;
+import net.szum123321.elytra_swap.core.ConfigHandler;
+import net.szum123321.elytra_swap.core.PlayerSwapDataHandler;
+import net.szum123321.elytra_swap.core.TrinketsCompatibility;
 
 public class ElytraSwap implements ModInitializer {
     public static final String MOD_ID = "elytra_swap";
@@ -19,6 +19,7 @@ public class ElytraSwap implements ModInitializer {
 
     public static ConfigHandler config;
     public static final ModLogger LOGGER = new ModLogger(MOD_ID);
+    public static TrinketsCompatibility tc;
 
     @Override
     public void onInitialize() {
@@ -29,6 +30,12 @@ public class ElytraSwap implements ModInitializer {
         registerSwapToggle();
 
         SwapEnablementCommandRegister.register();
+
+        tc = new TrinketsCompatibility();
+
+        if(FabricLoader.getInstance().isModLoaded("trinkets")){
+            tc.enableTrinkets();
+        }
     }
 
     private void registerSwapToggle(){

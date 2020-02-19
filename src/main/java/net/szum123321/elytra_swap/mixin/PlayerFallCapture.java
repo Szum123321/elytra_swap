@@ -11,7 +11,8 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.szum123321.elytra_swap.ElytraSwap;
-import net.szum123321.elytra_swap.PlayerSwapDataHandler;
+import net.szum123321.elytra_swap.core.PlayerSwapDataHandler;
+import net.szum123321.elytra_swap.core.TrinketsCompatibility;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(PlayerEntity.class)
@@ -30,46 +31,19 @@ public abstract class PlayerFallCapture extends LivingEntity {
         if((Object)this instanceof ServerPlayerEntity) {
             PlayerEntity player = (PlayerEntity) (Object) this;
 
-            if(checkIfPlayerHasElytra(player)){
+            if(ElytraSwap.tc.doesPlayerHaveElytra(player)){
                 if(!PlayerSwapDataHandler.get(player))
                     return;
 
                 if(!onGround && !player.isClimbing()){
                     if (PlayerSwapDataHandler.get(player) && heightDifference < 0 && getFallHeight(landedPosition) > 5 && (ServerSidePacketRegistry.INSTANCE.canPlayerReceive(player, ElytraSwap.DUMMY_PACKAGE) || ElytraSwap.config.noModPlayersHandlingMethod > 0)) {
-                        replaceArmorWithElytra(player);
+                        ElytraSwap.tc.replaceChestPlateWithElytra(player);
                         setFlag(7, true);    // thanks to this line you do not have to press space in order to start gliding
                     }
                 }else if(PlayerSwapDataHandler.get(player) && (ServerSidePacketRegistry.INSTANCE.canPlayerReceive(player, ElytraSwap.DUMMY_PACKAGE) || ElytraSwap.config.noModPlayersHandlingMethod > 0)){
-                    replaceElytraWithArmor(player);
+                    ElytraSwap.tc.replaceElytraWithChestPlate(player);
                     setFlag(7, false);
                 }
-            }
-        }
-    }
-
-    private void replaceElytraWithArmor(PlayerEntity player){
-        //ElytraSwap.LOGGER.all("Armour size: " + player.inventory.armor.size());
-        if(player.inventory.armor.get(2).getItem() == Items.ELYTRA){
-            for(int i = 0; i < player.inventory.main.size(); i++){
-                if(player.inventory.main.get(i).getItem().toString().toLowerCase().contains("chestplate")){  //kinda sketchy but should make this compatible with modded armor
-                    ItemStack elytra = player.inventory.armor.get(2);
-                    player.inventory.armor.set(2, player.inventory.main.get(i));
-                    player.inventory.main.set(i, elytra);
-                }
-            }
-        }
-    }
-
-    private void replaceArmorWithElytra(PlayerEntity player){
-        //ElytraSwap.LOGGER.all("Armour size: " + player.inventory.armor.size());
-        for (int i = 0; i < player.inventory.main.size(); i++){
-            if(player.inventory.main.get(i).getItem() == Items.ELYTRA){
-                ItemStack chestplate = player.inventory.armor.get(2);
-
-                player.inventory.armor.set(2, player.inventory.main.get(i));
-                player.inventory.main.set(i, chestplate);
-
-                return;
             }
         }
     }
@@ -85,11 +59,7 @@ public abstract class PlayerFallCapture extends LivingEntity {
             ElytraSwap.LOGGER.info("WTF! Why are you trying to glide below bedrock?");
             return -Math.abs(currentPosition.getY()) * 2; //even if you would fly below bedrock it should work :)
         }
-        return currentPosition.getY() - height;
-    }
 
-    private boolean checkIfPlayerHasElytra(PlayerEntity player){
-        //ElytraSwap.LOGGER.all("Armour size: " + player.inventory.armor.size());
-        return player.inventory.contains(new ItemStack(Items.ELYTRA));
+        return currentPosition.getY() - height;
     }
 }
