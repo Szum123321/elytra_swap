@@ -3,7 +3,7 @@ package net.szum123321.elytra_swap.mixin;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.client.network.packet.GameJoinS2CPacket;
+import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket;
 import net.minecraft.util.PacketByteBuf;
 import net.szum123321.elytra_swap.ElytraSwap;
 import net.szum123321.elytra_swap.client.ElytraSwapClientInit;
