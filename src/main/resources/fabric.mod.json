@@ -13,7 +13,7 @@
     "sources": "https://github.com/Szum123321/elytra_swap"
   },
 
-  "license": "GPL-3",
+  "license": "GPLv3",
 
   "environment": "*",
   "entrypoints": {

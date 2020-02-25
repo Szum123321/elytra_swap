@@ -8,7 +8,7 @@ Also you can takeoff by just clicking in the air with firework rocket!
 
 This functionality can be enabled and disabled by just clicking p.
 
-Mod needs is required on both server and client!
+Mod needs is required only on server!
 
 #### Requires Fabric API.
 

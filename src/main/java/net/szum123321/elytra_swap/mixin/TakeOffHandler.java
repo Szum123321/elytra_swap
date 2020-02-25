@@ -1,3 +1,21 @@
+/*
+    Automatic elytra replacement with chestplace
+    Copyright (C) 2020 Szum123321
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
 package net.szum123321.elytra_swap.mixin;
 
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
@@ -28,7 +46,7 @@ public abstract class TakeOffHandler extends Item {
 
     @Inject(method = "use", at = @At("HEAD"))
     private void fireworkUsageHandler(World world, PlayerEntity player, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> ci){
-        if(player instanceof ServerPlayerEntity && ElytraSwap.tc.doesPlayerHaveElytra(player) && checkSpaceOverPlayer(player, 15) &&
+        if(player instanceof ServerPlayerEntity && ElytraSwap.inventoryController.doesPlayerHaveElytra(player) && checkSpaceOverPlayer(player, 15) &&
                 player.onGround && PlayerSwapDataHandler.get(player) && !player.isFallFlying()){
 
             if(ServerSidePacketRegistry.INSTANCE.canPlayerReceive(player, ElytraSwap.DUMMY_PACKAGE) || ElytraSwap.config.noModPlayersHandlingMethod == 1){

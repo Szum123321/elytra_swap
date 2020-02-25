@@ -1,3 +1,21 @@
+/*
+    Automatic elytra replacement with chestplace
+    Copyright (C) 2020 Szum123321
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
 package net.szum123321.elytra_swap;
 
 import io.github.cottonmc.cotton.config.ConfigManager;
@@ -9,7 +27,7 @@ import net.minecraft.util.Identifier;
 import net.szum123321.elytra_swap.command.SwapEnablementCommandRegister;
 import net.szum123321.elytra_swap.core.ConfigHandler;
 import net.szum123321.elytra_swap.core.PlayerSwapDataHandler;
-import net.szum123321.elytra_swap.core.TrinketsCompatibility;
+import net.szum123321.elytra_swap.core.InventoryController;
 
 public class ElytraSwap implements ModInitializer {
     public static final String MOD_ID = "elytra_swap";
@@ -19,7 +37,7 @@ public class ElytraSwap implements ModInitializer {
 
     public static ConfigHandler config;
     public static final ModLogger LOGGER = new ModLogger(MOD_ID);
-    public static TrinketsCompatibility tc;
+    public static InventoryController inventoryController;
 
     @Override
     public void onInitialize() {
@@ -31,10 +49,10 @@ public class ElytraSwap implements ModInitializer {
 
         SwapEnablementCommandRegister.register();
 
-        tc = new TrinketsCompatibility();
+        inventoryController = new InventoryController();
 
-        if(FabricLoader.getInstance().isModLoaded("trinkets")){
-            tc.enableTrinkets();
+        if(FabricLoader.getInstance().isModLoaded("trinkets") && !FabricLoader.getInstance().isDevelopmentEnvironment()){
+            inventoryController.enableTrinkets();
         }
     }
 
