@@ -37,25 +37,25 @@ public abstract class PlayerFallCapture extends LivingEntity {
     }
 
     @Override
-    protected void fall(double heightDifference, boolean onGround, BlockState landedState, BlockPos landedPosition){
+    protected void fall(double heightDifference, boolean onGround, BlockState landedState, BlockPos landedPosition) {
         fallingHandler(heightDifference, onGround, landedState, landedPosition);
         super.fall(heightDifference, onGround, landedState, landedPosition);
     }
 
-    private void fallingHandler(double heightDifference, boolean onGround, BlockState landedState, BlockPos landedPosition){
-        if((Object)this instanceof ServerPlayerEntity) {
+    private void fallingHandler(double heightDifference, boolean onGround, BlockState landedState, BlockPos landedPosition) {
+        if ((Object) this instanceof ServerPlayerEntity) {
             PlayerEntity player = (PlayerEntity) (Object) this;
 
-            if(ElytraSwap.inventoryController.doesPlayerHaveElytra(player)){
-                if(!PlayerSwapDataHandler.get(player))
+            if (ElytraSwap.inventoryController.doesPlayerHaveElytra(player)) {
+                if (!PlayerSwapDataHandler.get(player))
                     return;
 
-                if(!onGround && !player.isClimbing() && !player.isSwimming()){
+                if (!onGround && !player.isClimbing() && !player.isSwimming()) {
                     if (PlayerSwapDataHandler.get(player) && heightDifference < 0 && getFallHeight(landedPosition) > 5 && (ServerSidePacketRegistry.INSTANCE.canPlayerReceive(player, ElytraSwap.DUMMY_PACKAGE) || ElytraSwap.config.noModPlayersHandlingMethod > 0)) {
                         ElytraSwap.inventoryController.replaceChestPlateWithElytra(player);
                         setFlag(7, true);    // thanks to this line you do not have to press space in order to start gliding
                     }
-                }else if(PlayerSwapDataHandler.get(player) && (ServerSidePacketRegistry.INSTANCE.canPlayerReceive(player, ElytraSwap.DUMMY_PACKAGE) || ElytraSwap.config.noModPlayersHandlingMethod > 0)){
+                } else if (PlayerSwapDataHandler.get(player) && (ServerSidePacketRegistry.INSTANCE.canPlayerReceive(player, ElytraSwap.DUMMY_PACKAGE) || ElytraSwap.config.noModPlayersHandlingMethod > 0)) {
                     ElytraSwap.inventoryController.replaceElytraWithChestPlate(player);
                     setFlag(7, false);
                 }
@@ -63,18 +63,16 @@ public abstract class PlayerFallCapture extends LivingEntity {
         }
     }
 
-    private int getFallHeight(BlockPos currentPosition){
-        int height = currentPosition.getY();
-
-        while(!world.getBlockState(new BlockPos(currentPosition.getX(), height, currentPosition.getZ())).getMaterial().isSolid() && height > -1){
-            height--;
+    private float getFallHeight(BlockPos currentPosition) {
+        try (BlockPos.PooledMutable temp = BlockPos.PooledMutable.get(currentPosition.getX(), Math.min(currentPosition.getY(), world.getHeight()), currentPosition.getZ())) {
+            while (true) {
+                if (temp.getY() < 0)
+                    return Float.POSITIVE_INFINITY; // You can fall "forever"
+                else if (world.getBlockState(temp).getMaterial().isSolid())
+                    return currentPosition.getY() - temp.getY(); // There's some solid block beneath you
+                else
+                    temp.setY(temp.getY() - 1); // We're still looking, go down again
+            }
         }
-
-        if(height <= -1){
-            ElytraSwap.LOGGER.info("WTF! Why are you trying to glide below bedrock?");
-            return -Math.abs(currentPosition.getY()) * 2; //even if you would fly below bedrock it should work :)
-        }
-
-        return currentPosition.getY() - height;
     }
 }
