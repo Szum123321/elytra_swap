@@ -37,6 +37,7 @@ public class ElytraSwap implements ModInitializer {
 
     public static ConfigHandler config;
     public static final ModLogger LOGGER = new ModLogger(MOD_ID);
+
     public static InventoryController inventoryController;
 
     @Override
@@ -68,7 +69,6 @@ public class ElytraSwap implements ModInitializer {
                 }
             });
         });
-
         ServerSidePacketRegistry.INSTANCE.register(ElytraSwap.DUMMY_PACKAGE, ((packetContext, packetByteBuf) -> {}));
     }
 }

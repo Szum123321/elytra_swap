@@ -35,7 +35,7 @@ dependencies {
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modCompile "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-
+  
 	modCompile "com.github.emilyploszaj:trinkets:${project.trinkets_version}"
 
 	modCompile "io.github.cottonmc.cotton:cotton-config:1.0.0-rc.7"

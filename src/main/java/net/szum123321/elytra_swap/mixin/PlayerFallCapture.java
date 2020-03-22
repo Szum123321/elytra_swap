@@ -15,7 +15,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-
+  
 package net.szum123321.elytra_swap.mixin;
 
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;

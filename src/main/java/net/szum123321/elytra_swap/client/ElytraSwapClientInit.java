@@ -15,7 +15,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-
+  
 package net.szum123321.elytra_swap.client;
 
 import io.netty.buffer.Unpooled;
@@ -81,7 +81,6 @@ public class ElytraSwapClientInit implements ClientModInitializer {
 
     private void registerPackets(){
         ClientSidePacketRegistry.INSTANCE.register(ElytraSwap.DUMMY_PACKAGE, ((packetContext, packetByteBuf) -> {
-
         }));
     }
 }
