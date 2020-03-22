@@ -13,8 +13,7 @@
     "sources": "https://github.com/Szum123321/elytra_swap"
   },
 
-  "license": "GPL-3",
-  "icon": "assets/modid/icon.png",
+  "license": "GPLv3",
 
   "environment": "*",
   "entrypoints": {
@@ -32,10 +31,6 @@
   "depends": {
     "fabricloader": ">=0.4.0",
     "fabric": "*",
-    "minecraft": "1.15.x",
-    "cotton-config": "*"
-  },
-  "suggests": {
-    "flamingo": "*"
+    "minecraft": "1.15.*"
   }
 }

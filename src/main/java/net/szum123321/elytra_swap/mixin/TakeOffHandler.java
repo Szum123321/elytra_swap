@@ -1,20 +1,38 @@
+/*
+    Automatic elytra replacement with chestplace
+    Copyright (C) 2020 Szum123321
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
 package net.szum123321.elytra_swap.mixin;
 
-import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.minecraft.entity.FireworkEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.FireworkItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
+import net.minecraft.network.packet.s2c.play.EntityVelocityUpdateS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Hand;
-import net.minecraft.util.PacketByteBuf;
+import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.szum123321.elytra_swap.ElytraSwap;
-import net.szum123321.elytra_swap.PlayerSwapDataHandler;
+import net.szum123321.elytra_swap.core.PlayerSwapDataHandler;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -26,30 +44,14 @@ public abstract class TakeOffHandler extends Item {
         super(settings);
     }
 
-    @Inject(method = "use", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/TypedActionResult;pass(Ljava/lang/Object;)Lnet/minecraft/util/TypedActionResult;"))
-    private void fireworkUsageHandler(World world, PlayerEntity player, Hand hand, CallbackInfoReturnable<ItemStack> ci){
-        if(player instanceof ServerPlayerEntity && checkIfPlayerHasElytra(player) && checkSpaceOverPlayer(player, 15) &&
-                player.onGround && PlayerSwapDataHandler.get(player)){
+    @Inject(method = "use", at = @At("HEAD"))
+    private void fireworkUsageHandler(World world, PlayerEntity player, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> ci){
+        if(player instanceof ServerPlayerEntity && ElytraSwap.inventoryController.doesPlayerHaveElytra(player) && checkSpaceOverPlayer(player, 15) &&
+                player.onGround && PlayerSwapDataHandler.get(player) && !player.isFallFlying()){
 
-            boolean canExecute = true;
+            if(ServerSidePacketRegistry.INSTANCE.canPlayerReceive(player, ElytraSwap.DUMMY_PACKAGE) || ElytraSwap.config.noModPlayersHandlingMethod == 1){
+                ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, new EntityVelocityUpdateS2CPacket(player.getEntityId(), new Vec3d(-Math.sin(Math.toRadians(player.yaw)) * ElytraSwap.config.kickSpeed, ElytraSwap.config.kickSpeed, Math.cos(Math.toRadians(player.yaw)) * ElytraSwap.config.kickSpeed)));
 
-            if(world.isClient){  //When server is local (a.k.a singleplayer)
-                player.addVelocity(-Math.sin(Math.toRadians(player.yaw)) * ElytraSwap.config.kickSpeed, ElytraSwap.config.kickSpeed, Math.cos(Math.toRadians(player.yaw)) * ElytraSwap.config.kickSpeed);
-            }else { //Server is remote
-                if (ServerSidePacketRegistry.INSTANCE.canPlayerReceive(player, ElytraSwap.DUMMY_PACKAGE)) {  //player has mod installed
-                    PacketByteBuf passedData = new PacketByteBuf(Unpooled.buffer());
-                    passedData.writeFloat(ElytraSwap.config.kickSpeed);
-                    ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, ElytraSwap.KICK_PLAYER_INTO_AIR, passedData);
-                }else{
-                    if(ElytraSwap.config.noModPlayersHandlingMethod == 1){
-                        player.teleport(player.getX(), player.getY() + (ElytraSwap.config.kickSpeed * 10), player.getZ());
-                    }else{
-                        canExecute = false;
-                    }
-                }
-            }
-
-            if(canExecute){
                 world.spawnEntity(new FireworkEntity(world, player.getMainHandStack(), player));
 
                 if(!player.isCreative())
@@ -65,9 +67,5 @@ public abstract class TakeOffHandler extends Item {
         }
 
         return true;
-    }
-
-    private static boolean checkIfPlayerHasElytra(PlayerEntity player){
-        return player.inventory.contains(new ItemStack(Items.ELYTRA));
     }
 }
