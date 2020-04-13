@@ -53,8 +53,8 @@ public class FlatInventory {
 		this.trinketsSupport = FabricLoader.getInstance().isModLoaded("trinkets");
 
 		for (int i = 0; i < player.inventory.getInvSize(); i++) {
-			if (i == 38) //Chestplae slot
-				specialSlots.put(SpecialSlots.CHESTPLAE, slots.size());
+			if (i == 38) //Chestplate slot
+				specialSlots.put(SpecialSlots.CHESTPLATE, slots.size());
 
 			slots.add(new Slot(1, -1, i));
 
@@ -85,10 +85,6 @@ public class FlatInventory {
 		return slots.size();
 	}
 
-	public boolean getTrinketsSupport() {
-		return trinketsSupport;
-	}
-
 	public void setItemStack(int index, ItemStack stack) {
 		if (index >= slots.size())
 			return;
@@ -105,11 +101,13 @@ public class FlatInventory {
 					DefaultedList<ItemStack> shulkerInventory = DefaultedList.ofSize(27, ItemStack.EMPTY);
 					Inventories.fromTag(shulker.getTag().getCompound("BlockEntityTag"), shulkerInventory);
 
-					shulkerInventory.set(slot.index, stack);
+					shulkerInventory.set(slot.shulkerIndex, stack);
 
 					CompoundTag tag = new CompoundTag();
 					Inventories.toTag(tag, shulkerInventory, false);
 					shulker.putSubTag("BlockEntityTag", tag);
+
+					player.inventory.setInvStack(slot.index, shulker);
 				}
 			}
 		} else if (slot.invType == 2 && trinketsSupport) { // trinkets inventory
@@ -122,11 +120,13 @@ public class FlatInventory {
 					DefaultedList<ItemStack> shulkerInventory = DefaultedList.ofSize(27, ItemStack.EMPTY);
 					Inventories.fromTag(shulker.getTag().getCompound("BlockEntityTag"), shulkerInventory);
 
-					shulkerInventory.set(slot.index, stack);
+					shulkerInventory.set(slot.shulkerIndex, stack);
 
 					CompoundTag tag = new CompoundTag();
 					Inventories.toTag(tag, shulkerInventory, false);
 					shulker.putSubTag("BlockEntityTag", tag);
+
+					player.inventory.setInvStack(slot.index, shulker);
 				}
 			}
 		}
@@ -182,20 +182,20 @@ public class FlatInventory {
 		if (trinketsSupport)
 			return specialSlots.get(SpecialSlots.CAPE);
 		else
-			return specialSlots.get(SpecialSlots.CHESTPLAE);
+			return specialSlots.get(SpecialSlots.CHESTPLATE);
 	}
 
 	public int getChestplateSlotId() {
-		return specialSlots.get(SpecialSlots.CHESTPLAE);
+		return specialSlots.get(SpecialSlots.CHESTPLATE);
 	}
 
 	private enum SpecialSlots {
-		CAPE, CHESTPLAE
+		CAPE, CHESTPLATE
 	}
 
 	private class Slot {
 		public int invType;  // 1 - normal, 2 - trinket
-		public int shulkerIndex; // id of shulker in given inventory
+		public int shulkerIndex; // id of item in shulker
 		public int index; // id of slot in given inventory
 
 		public Slot(int invType, int shulkerIndex, int index) {

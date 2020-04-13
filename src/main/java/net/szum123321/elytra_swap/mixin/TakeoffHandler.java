@@ -24,16 +24,14 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.FireworkItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 import net.minecraft.network.packet.s2c.play.EntityVelocityUpdateS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
-import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.szum123321.elytra_swap.ElytraSwap;
-import net.szum123321.elytra_swap.core.PlayerSwapDataHandler;
+import net.szum123321.elytra_swap.core.FlatInventory;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -49,10 +47,10 @@ public abstract class TakeoffHandler extends Item {
 	private void fireworkUsageHandler(World world, PlayerEntity player, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> ci) {
 		if (player instanceof ServerPlayerEntity &&
 				player.onGround &&
-				ElytraSwap.inventoryController.doesPlayerHasElytra(player) &&
+				checkSpaceOverPlayer(player, ElytraSwap.config.requiredHeightAbovePlayer) &&
 				ElytraSwap.playerSwapDataHandler.get(player) &&
 				(ServerSidePacketRegistry.INSTANCE.canPlayerReceive(player, ElytraSwap.DUMMY_PACKAGE) || ElytraSwap.config.noModPlayersHandlingMethod == 1) &&
-				checkSpaceOverPlayer(player, ElytraSwap.config.requiredHeightAbovePlayer)) {
+				ElytraSwap.inventoryController.doesPlayerHasElytra(new FlatInventory(player))) {
 			ServerSidePacketRegistry.INSTANCE.sendToPlayer(player,
 					new EntityVelocityUpdateS2CPacket(player.getEntityId(),
 							new Vec3d(-Math.sin(Math.toRadians(player.yaw)) * ElytraSwap.config.kickSpeed,

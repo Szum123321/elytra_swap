@@ -22,7 +22,6 @@ import io.github.cottonmc.cotton.config.ConfigManager;
 import io.github.cottonmc.cotton.logging.ModLogger;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.util.Identifier;
 import net.szum123321.elytra_swap.command.SwapEnablementCommandRegister;
 import net.szum123321.elytra_swap.core.ConfigHandler;

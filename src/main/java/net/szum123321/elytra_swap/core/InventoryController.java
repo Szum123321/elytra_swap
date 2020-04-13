@@ -18,19 +18,16 @@
 
 package net.szum123321.elytra_swap.core;
 
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 
 public class InventoryController {
-	public void replaceElytraWithChestPlate(PlayerEntity player) {
-		FlatInventory inv = new FlatInventory(player);
-
+	public void replaceElytraWithChestPlate(FlatInventory inv) {
 		if (!inv.getItemStack(inv.getChestplateSlotId()).getItem().getName().getString().toLowerCase().contains("chestplate")) {
 			int chestplateSlot;
 
 			for(chestplateSlot = 0; chestplateSlot < inv.getSize(); chestplateSlot++) {
-				if (!inv.getItemStack(chestplateSlot).getItem().getName().getString().toLowerCase().contains("chestplate"))
+				if (inv.getItemStack(chestplateSlot).getItem().getName().getString().toLowerCase().contains("chestplate"))
 					break;
 			}
 
@@ -44,9 +41,7 @@ public class InventoryController {
 		}
 	}
 
-	public void replaceChestPlateWithElytra(PlayerEntity player) {
-		FlatInventory inv = new FlatInventory(player);
-
+	public void replaceChestPlateWithElytra(FlatInventory inv) {
 		if (inv.getItemStack(inv.getElytraSlotId()).getItem() != Items.ELYTRA) {
 			int elytraSlot;
 
@@ -65,9 +60,7 @@ public class InventoryController {
 		}
 	}
 
-	public boolean doesPlayerHasElytra(PlayerEntity player) {
-		FlatInventory inv = new FlatInventory(player);
-
+	public boolean doesPlayerHasElytra(FlatInventory inv) {
 		return inv.hasElytra();
 	}
 }
