@@ -19,6 +19,7 @@
 package net.szum123321.elytra_swap.core;
 
 import dev.emi.trinkets.api.*;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
@@ -30,11 +31,7 @@ public class InventoryController {
 	private boolean isTrinketsInstalled;
 
 	public InventoryController() {
-		isTrinketsInstalled = false;
-	}
-
-	public void enableTrinkets() {
-		isTrinketsInstalled = true;
+		isTrinketsInstalled = FabricLoader.getInstance().isModLoaded("trinkets");
 	}
 
 	public void replaceElytraWithChestPlate(PlayerEntity player) {

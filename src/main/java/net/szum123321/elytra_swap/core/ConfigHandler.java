@@ -26,8 +26,8 @@ import net.szum123321.elytra_swap.ElytraSwap;
 public class ConfigHandler {
 	@Comment(value = "\nChanges how server treats players without mod installed\n" +
 			"0: players without Elytra Swap installed are just ignored\n" +
-			"1 (default): players without Elytra Swap installed will be kicked into air armor change will be forced and can only be enabled or disabled by command\n" +
-			"2: for players without Elytra Swap installed armor still will be changed when falling but firework usage will be unavailable\n"
+			"1 (default): players without Elytra Swap installed will be kicked into air, armor change will be forced and can only be enabled or disabled by command\n" +
+			"2: for players without Elytra Swap installed, armor still will be changed when falling but firework usage will be unavailable.\n"
 	)
 	public int noModPlayersHandlingMethod = 1;
 

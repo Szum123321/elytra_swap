@@ -47,8 +47,9 @@ public abstract class PlayerFallCapture extends LivingEntity {
         if ((Object) this instanceof ServerPlayerEntity) {
             PlayerEntity player = (PlayerEntity) (Object) this;
 
-            if (ElytraSwap.inventoryController.doesPlayerHasElytra(player) && !ElytraSwap.playerSwapDataHandler.get(player) &&
+            if (ElytraSwap.inventoryController.doesPlayerHasElytra(player) && ElytraSwap.playerSwapDataHandler.get(player) &&
                     (ServerSidePacketRegistry.INSTANCE.canPlayerReceive(player, ElytraSwap.DUMMY_PACKAGE) || ElytraSwap.config.noModPlayersHandlingMethod > 0)) {
+
                 if (!onGround && !player.isClimbing() && !player.isSwimming()) {
                     if (heightDifference < 0 && getFallHeight(landedPosition) > 5) {
                         ElytraSwap.inventoryController.replaceChestPlateWithElytra(player);

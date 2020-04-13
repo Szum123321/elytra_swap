@@ -53,9 +53,6 @@ public class ElytraSwap implements ModInitializer {
 
         inventoryController = new InventoryController();
         playerSwapDataHandler = new PlayerSwapDataHandler();
-
-        if(FabricLoader.getInstance().isModLoaded("trinkets") && !FabricLoader.getInstance().isDevelopmentEnvironment())
-            inventoryController.enableTrinkets();
     }
 
     private void registerSwapToggle() {
