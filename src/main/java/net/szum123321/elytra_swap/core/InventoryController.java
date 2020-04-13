@@ -18,86 +18,56 @@
 
 package net.szum123321.elytra_swap.core;
 
-import dev.emi.trinkets.api.*;
-import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 
 public class InventoryController {
-	private boolean isTrinketsInstalled;
-
-	public InventoryController() {
-		isTrinketsInstalled = FabricLoader.getInstance().isModLoaded("trinkets");
-	}
-
 	public void replaceElytraWithChestPlate(PlayerEntity player) {
-		if (!isTrinketsInstalled && player.inventory.armor.get(2).getItem() == Items.ELYTRA) {
-			for (int i = 0; i < player.inventory.getInvSize(); i++) {
-				if (player.inventory.getInvStack(i).getItem() instanceof ArmorItem &&
-						((ArmorItem) player.inventory.getInvStack(i).getItem()).getSlotType() == EquipmentSlot.CHEST) {  //kinda sketchy but should make this compatible with modded armor
-					ItemStack elytra = player.inventory.armor.get(2).copy();
+		FlatInventory inv = new FlatInventory(player);
 
-					player.inventory.armor.set(2, player.inventory.getInvStack(i).copy());
-					player.inventory.setInvStack(i, elytra);
+		if (!inv.getItemStack(inv.getChestplateSlotId()).getItem().getName().getString().toLowerCase().contains("chestplate")) {
+			int chestplateSlot;
 
+			for(chestplateSlot = 0; chestplateSlot < inv.getSize(); chestplateSlot++) {
+				if (!inv.getItemStack(chestplateSlot).getItem().getName().getString().toLowerCase().contains("chestplate"))
 					break;
-				}
 			}
+
+			if (chestplateSlot >= inv.getSize() - 1)
+				return;
+
+			ItemStack chestplate = inv.getItemStack(chestplateSlot).copy();
+
+			inv.setItemStack(chestplateSlot, inv.getItemStack(inv.getChestplateSlotId()).copy());
+			inv.setItemStack(inv.getChestplateSlotId(), chestplate);
 		}
 	}
 
 	public void replaceChestPlateWithElytra(PlayerEntity player) {
-		if (isTrinketsInstalled) {
-			Inventory inv = TrinketsApi.getTrinketsInventory(player);
+		FlatInventory inv = new FlatInventory(player);
 
-			if (inv.getInvStack(getTrinketElytraSlotId()).getItem() != Items.ELYTRA) {
-				for (int i = 0; i < player.inventory.getInvSize(); i++) {
-					if (player.inventory.getInvStack(i).getItem() == Items.ELYTRA) {
-						ItemStack elytra = player.inventory.getInvStack(i).copy();
+		if (inv.getItemStack(inv.getElytraSlotId()).getItem() != Items.ELYTRA) {
+			int elytraSlot;
 
-						player.inventory.setInvStack(i, inv.getInvStack(getTrinketElytraSlotId()).copy());
-						inv.setInvStack(getTrinketElytraSlotId(), elytra);
-
-						break;
-					}
-				}
-			}
-		} else if (player.inventory.armor.get(2).getItem() != Items.ELYTRA) {
-			for (int i = 0; i < player.inventory.getInvSize(); i++) {
-				if (player.inventory.getInvStack(i).getItem() == Items.ELYTRA) {
-					ItemStack elytra = player.inventory.getInvStack(i).copy();
-
-					player.inventory.setInvStack(i, player.inventory.armor.get(2).copy());
-					player.inventory.armor.set(2, elytra);
-
+			for (elytraSlot = 0; elytraSlot < inv.getSize(); elytraSlot++) {
+				if (inv.getItemStack(elytraSlot).getItem() == Items.ELYTRA)
 					break;
-				}
 			}
+
+			if (elytraSlot >= inv.getSize() - 1)
+				return;
+
+			ItemStack elytra = inv.getItemStack(elytraSlot).copy();
+
+			inv.setItemStack(elytraSlot, inv.getItemStack(inv.getElytraSlotId()).copy());
+			inv.setItemStack(inv.getElytraSlotId(), elytra);
 		}
 	}
 
 	public boolean doesPlayerHasElytra(PlayerEntity player) {
-		boolean val = false;
+		FlatInventory inv = new FlatInventory(player);
 
-		if (isTrinketsInstalled)
-			val = TrinketsApi.getTrinketsInventory(player).getInvStack(getTrinketElytraSlotId()).getItem() == Items.ELYTRA;
-
-
-		val |= player.inventory.contains(new ItemStack(Items.ELYTRA));
-
-		return val;
-	}
-
-	private int getTrinketElytraSlotId() {
-		for (int i = 0; i < TrinketSlots.getSlotCount(); i++) {
-			if (TrinketSlots.getAllSlots().get(i).getName().equals(Slots.CAPE))
-				return i;
-		}
-
-		return -1;
+		return inv.hasElytra();
 	}
 }
