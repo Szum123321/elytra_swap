@@ -29,6 +29,7 @@ import net.minecraft.world.World;
 import net.szum123321.elytra_swap.ElytraSwap;
 import net.szum123321.elytra_swap.core.PlayerSwapDataHandler;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.util.asm.ElementNode;
 
 @Mixin(PlayerEntity.class)
 public abstract class PlayerFallCapture extends LivingEntity {
@@ -38,24 +39,22 @@ public abstract class PlayerFallCapture extends LivingEntity {
 
     @Override
     protected void fall(double heightDifference, boolean onGround, BlockState landedState, BlockPos landedPosition) {
-        fallingHandler(heightDifference, onGround, landedState, landedPosition);
+        fallingHandler(heightDifference, onGround, landedPosition);
         super.fall(heightDifference, onGround, landedState, landedPosition);
     }
 
-    private void fallingHandler(double heightDifference, boolean onGround, BlockState landedState, BlockPos landedPosition) {
+    private void fallingHandler(double heightDifference, boolean onGround, BlockPos landedPosition) {
         if ((Object) this instanceof ServerPlayerEntity) {
             PlayerEntity player = (PlayerEntity) (Object) this;
 
-            if (ElytraSwap.inventoryController.doesPlayerHaveElytra(player)) {
-                if (!PlayerSwapDataHandler.get(player))
-                    return;
-
+            if (ElytraSwap.inventoryController.doesPlayerHasElytra(player) && !ElytraSwap.playerSwapDataHandler.get(player) &&
+                    (ServerSidePacketRegistry.INSTANCE.canPlayerReceive(player, ElytraSwap.DUMMY_PACKAGE) || ElytraSwap.config.noModPlayersHandlingMethod > 0)) {
                 if (!onGround && !player.isClimbing() && !player.isSwimming()) {
-                    if (PlayerSwapDataHandler.get(player) && heightDifference < 0 && getFallHeight(landedPosition) > 5 && (ServerSidePacketRegistry.INSTANCE.canPlayerReceive(player, ElytraSwap.DUMMY_PACKAGE) || ElytraSwap.config.noModPlayersHandlingMethod > 0)) {
+                    if (heightDifference < 0 && getFallHeight(landedPosition) > 5) {
                         ElytraSwap.inventoryController.replaceChestPlateWithElytra(player);
                         setFlag(7, true);    // thanks to this line you do not have to press space in order to start gliding
                     }
-                } else if (PlayerSwapDataHandler.get(player) && (ServerSidePacketRegistry.INSTANCE.canPlayerReceive(player, ElytraSwap.DUMMY_PACKAGE) || ElytraSwap.config.noModPlayersHandlingMethod > 0)) {
+                } else {
                     ElytraSwap.inventoryController.replaceElytraWithChestPlate(player);
                     setFlag(7, false);
                 }
@@ -63,6 +62,7 @@ public abstract class PlayerFallCapture extends LivingEntity {
         }
     }
 
+    //  Thx magneticflux!
     private float getFallHeight(BlockPos currentPosition) {
         try (BlockPos.PooledMutable temp = BlockPos.PooledMutable.get(currentPosition.getX(), Math.min(currentPosition.getY(), world.getHeight()), currentPosition.getZ())) {
             while (true) {

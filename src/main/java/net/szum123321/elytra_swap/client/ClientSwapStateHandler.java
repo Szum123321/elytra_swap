@@ -31,41 +31,36 @@ public class ClientSwapStateHandler {
         return state;
     }
 
-    public void set(boolean val){
+    public void set (boolean val) {
         state = val;
         save();
     }
 
-    public void load(){
-        try{
+    public void load() {
+        try {
             File file = FabricLoader.getInstance().getGameDirectory().toPath().resolve("data/" + ElytraSwap.MOD_ID + ".txt").toFile();
 
-            if(!file.exists()){
+            if (!file.exists()) {
                 file.getParentFile().mkdirs();
                 file.createNewFile();
             }
 
             Scanner reader = new Scanner(file);
 
-            if(reader.hasNextBoolean()) {
-                state = reader.nextBoolean();
-            }else{
-                state = true;
-            }
+            state = (reader.hasNextBoolean() ? reader.nextBoolean() : true);
 
             reader.close();
-
-        }catch (Exception e){
+        } catch (Exception e) {
             ElytraSwap.LOGGER.error("Error while loading datafile: %s", e.toString());
             state = true;
         }
     }
 
-    private void save(){
-        try{
+    private void save() {
+        try {
             File file = FabricLoader.getInstance().getGameDirectory().toPath().resolve("data/" + ElytraSwap.MOD_ID + ".txt").toFile();
 
-            if(!file.exists()){
+            if (!file.exists()) {
                 file.getParentFile().mkdirs();
                 file.createNewFile();
             }
@@ -75,7 +70,7 @@ public class ClientSwapStateHandler {
             writer.write(state ? "true" : "false");
 
             writer.close();
-        }catch (Exception e){
+        } catch (Exception e) {
             ElytraSwap.LOGGER.error("Error while saving datafile: %s", e.toString());
             state = true;
         }

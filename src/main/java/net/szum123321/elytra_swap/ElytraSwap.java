@@ -39,6 +39,7 @@ public class ElytraSwap implements ModInitializer {
     public static final ModLogger LOGGER = new ModLogger(MOD_ID);
 
     public static InventoryController inventoryController;
+    public static PlayerSwapDataHandler playerSwapDataHandler;
 
     @Override
     public void onInitialize() {
@@ -51,25 +52,25 @@ public class ElytraSwap implements ModInitializer {
         SwapEnablementCommandRegister.register();
 
         inventoryController = new InventoryController();
+        playerSwapDataHandler = new PlayerSwapDataHandler();
 
-        if(FabricLoader.getInstance().isModLoaded("trinkets") && !FabricLoader.getInstance().isDevelopmentEnvironment()){
+        if(FabricLoader.getInstance().isModLoaded("trinkets") && !FabricLoader.getInstance().isDevelopmentEnvironment())
             inventoryController.enableTrinkets();
-        }
     }
 
-    private void registerSwapToggle(){
+    private void registerSwapToggle() {
         ServerSidePacketRegistry.INSTANCE.register(SET_SWAP_ENABLE, (packetContext, attachedData) -> {
             boolean val = attachedData.readBoolean();
 
             packetContext.getTaskQueue().execute(() -> {
-                if(PlayerSwapDataHandler.isMapped(packetContext.getPlayer())){
-                    PlayerSwapDataHandler.set(packetContext.getPlayer(), val);
-                }else{
-                    PlayerSwapDataHandler.addPlayer(packetContext.getPlayer(), val);
+                if (playerSwapDataHandler.isMapped(packetContext.getPlayer())) {
+                    playerSwapDataHandler.set(packetContext.getPlayer(), val);
+                } else {
+                    playerSwapDataHandler.addPlayer(packetContext.getPlayer(), val);
                 }
             });
         });
+
         ServerSidePacketRegistry.INSTANCE.register(ElytraSwap.DUMMY_PACKAGE, ((packetContext, packetByteBuf) -> {}));
     }
 }
-

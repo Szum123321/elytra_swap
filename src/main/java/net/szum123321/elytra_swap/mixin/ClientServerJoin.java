@@ -33,15 +33,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ClientPlayNetworkHandler.class)
 public class ClientServerJoin {
     @Inject(method = "onGameJoin", at= @At("RETURN"))
-    private void join(GameJoinS2CPacket packet, CallbackInfo ci){
-        if(ClientSidePacketRegistry.INSTANCE.canServerReceive(ElytraSwap.DUMMY_PACKAGE)) {
+    private void join(GameJoinS2CPacket packet, CallbackInfo ci) {
+        if (ClientSidePacketRegistry.INSTANCE.canServerReceive(ElytraSwap.DUMMY_PACKAGE)) {
             PacketByteBuf passedData = new PacketByteBuf(Unpooled.buffer());
             passedData.writeBoolean(ElytraSwapClientInit.swapStateHandler.get());
 
             ClientSidePacketRegistry.INSTANCE.sendToServer(ElytraSwap.SET_SWAP_ENABLE, passedData);
 
             ElytraSwapClientInit.serverHasMod = true;
-        }else{
+        } else {
             ElytraSwapClientInit.serverHasMod = false;
         }
     }

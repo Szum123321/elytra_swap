@@ -24,13 +24,16 @@ import net.szum123321.elytra_swap.ElytraSwap;
 
 @ConfigFile(name = ElytraSwap.MOD_ID)
 public class ConfigHandler {
-    @Comment(value = "Changes how server treats players without mod installed\n" +
-            "0: players without Elytra Swap installed are just ignored\n"+
-            "1 (default): players without Elytra Swap installed will be kicked into air armor change will be forced and can only be enabled or disabled by command\n"+
-            "2: for players without Elytra Swap installed armor still will be changed when falling but firework usage will be unavailable"
-    )
-    public int noModPlayersHandlingMethod = 1;
+	@Comment(value = "\nChanges how server treats players without mod installed\n" +
+			"0: players without Elytra Swap installed are just ignored\n" +
+			"1 (default): players without Elytra Swap installed will be kicked into air armor change will be forced and can only be enabled or disabled by command\n" +
+			"2: for players without Elytra Swap installed armor still will be changed when falling but firework usage will be unavailable\n"
+	)
+	public int noModPlayersHandlingMethod = 1;
 
-    @Comment(value = "This is how much vertical speed player will gain as a result of using firework rocket")
-    public float kickSpeed = 1.7F;
+	@Comment(value = "\nThis is how much vertical speed player will gain as a result of using firework rocket\n")
+	public float kickSpeed = 1.7F;
+
+	@Comment(value = "\nMinimal height that player has to have above him in order to use firework\n")
+	public int requiredHeightAbovePlayer = 15;
 }

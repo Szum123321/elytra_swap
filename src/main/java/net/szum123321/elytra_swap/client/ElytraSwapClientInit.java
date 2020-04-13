@@ -15,7 +15,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-  
+
 package net.szum123321.elytra_swap.client;
 
 import io.netty.buffer.Unpooled;
@@ -32,55 +32,55 @@ import net.szum123321.elytra_swap.ElytraSwap;
 import org.lwjgl.glfw.GLFW;
 
 public class ElytraSwapClientInit implements ClientModInitializer {
-    private static FabricKeyBinding enableSwap;
-    private boolean lastState = false;
+	public static ClientSwapStateHandler swapStateHandler;
 
-    public static ClientSwapStateHandler swapStateHandler;
+	private static FabricKeyBinding enableSwap;
 
-    public static boolean serverHasMod = false;
+	public static boolean serverHasMod = false;
+	private boolean lastState = false;
 
-    @Override
-    public void onInitializeClient() {
-        swapStateHandler = new ClientSwapStateHandler();
-        swapStateHandler.load();
+	@Override
+	public void onInitializeClient() {
+		swapStateHandler = new ClientSwapStateHandler();
+		swapStateHandler.load();
 
-        registerKeyBind();
-        registerPackets();
-    }
+		registerKeyBind();
+		registerPackets();
+	}
 
-    private void registerKeyBind(){
-        KeyBindingRegistry.INSTANCE.addCategory("Elytra Swap");
+	private void registerKeyBind() {
+		KeyBindingRegistry.INSTANCE.addCategory("Elytra Swap");
 
-        enableSwap = FabricKeyBinding.Builder.create(
-                new Identifier(ElytraSwap.MOD_ID, "swap"),
-                InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_P,
-                "Elytra Swap"
-        ).build();
+		enableSwap = FabricKeyBinding.Builder.create(
+				new Identifier(ElytraSwap.MOD_ID, "swap"),
+				InputUtil.Type.KEYSYM,
+				GLFW.GLFW_KEY_P,
+				"Elytra Swap"
+		).build();
 
-        KeyBindingRegistry.INSTANCE.register(enableSwap);
+		KeyBindingRegistry.INSTANCE.register(enableSwap);
 
-        ClientTickCallback.EVENT.register(e -> {
-            if(enableSwap.isPressed() && serverHasMod){
-                if(!lastState){
-                    swapStateHandler.set(!swapStateHandler.get());
-                    lastState = true;
+		ClientTickCallback.EVENT.register(e -> {
+			if (enableSwap.isPressed() && serverHasMod) {
+				if (!lastState) {
+					swapStateHandler.set(!swapStateHandler.get());
+					lastState = true;
 
-                    if(e.player != null)
-                        e.player.sendMessage(new TranslatableText("Elytra Swap in now %s", swapStateHandler.get() ? "Enabled" : "Disabled"));
+					if (e.player != null)
+						e.player.sendMessage(new TranslatableText("Elytra Swap in now %s", swapStateHandler.get() ? "Enabled" : "Disabled"));
 
-                    PacketByteBuf passedData = new PacketByteBuf(Unpooled.buffer());
-                    passedData.writeBoolean(swapStateHandler.get());
-                    ClientSidePacketRegistry.INSTANCE.sendToServer(ElytraSwap.SET_SWAP_ENABLE, passedData);
-                }
-            }else{
-                lastState = false;
-            }
-        });
-    }
+					PacketByteBuf passedData = new PacketByteBuf(Unpooled.buffer());
+					passedData.writeBoolean(swapStateHandler.get());
 
-    private void registerPackets(){
-        ClientSidePacketRegistry.INSTANCE.register(ElytraSwap.DUMMY_PACKAGE, ((packetContext, packetByteBuf) -> {
-        }));
-    }
+					ClientSidePacketRegistry.INSTANCE.sendToServer(ElytraSwap.SET_SWAP_ENABLE, passedData);
+				}
+			} else {
+				lastState = false;
+			}
+		});
+	}
+
+	private void registerPackets() {
+		ClientSidePacketRegistry.INSTANCE.register(ElytraSwap.DUMMY_PACKAGE, ((packetContext, packetByteBuf) -> {}));
+	}
 }

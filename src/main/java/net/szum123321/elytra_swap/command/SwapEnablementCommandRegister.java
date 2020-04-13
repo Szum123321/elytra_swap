@@ -25,25 +25,25 @@ import net.fabricmc.fabric.api.registry.CommandRegistry;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.TranslatableText;
-import net.szum123321.elytra_swap.core.PlayerSwapDataHandler;
+import net.szum123321.elytra_swap.ElytraSwap;
 
 public class SwapEnablementCommandRegister {
-    public static void register(){
-        CommandRegistry.INSTANCE.register(false, dispatcher -> dispatcher.register(CommandManager.literal("swap")
-                .then(CommandManager.argument("Operation", BoolArgumentType.bool())//SwapEnableArgumentType.Int())
-                        .executes(SwapEnablementCommandRegister::execute)
-                ).executes(ctx -> {
-                    ctx.getSource().getPlayer().sendMessage(new TranslatableText("Available options are: true(enable), false(disable). Now Elytra Swap is: %s", PlayerSwapDataHandler.get(ctx.getSource().getPlayer()) ? "Enabled" : "Disabled"));
-                    return 1;
-                })
-        ));
-    }
+	public static void register() {
+		CommandRegistry.INSTANCE.register(false, dispatcher -> dispatcher.register(CommandManager.literal("swap")
+				.then(CommandManager.argument("Operation", BoolArgumentType.bool())
+						.executes(SwapEnablementCommandRegister::execute)
+				).executes(ctx -> {
+					ctx.getSource().getPlayer().sendMessage(new TranslatableText("Available options are: true(enable), false(disable). Now Elytra Swap is: %s", ElytraSwap.playerSwapDataHandler.get(ctx.getSource().getPlayer()) ? "Enabled" : "Disabled"));
+					return 1;
+				})
+		));
+	}
 
-    private static int execute(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
-        PlayerSwapDataHandler.set(ctx.getSource().getPlayer(), BoolArgumentType.getBool(ctx, "Operation"));
+	private static int execute(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
+		ElytraSwap.playerSwapDataHandler.set(ctx.getSource().getPlayer(), BoolArgumentType.getBool(ctx, "Operation"));
 
-        ctx.getSource().getPlayer().sendMessage(new TranslatableText("Elytra Swap in %s", PlayerSwapDataHandler.get(ctx.getSource().getPlayer()) ? "Enabled" : "Disabled"));
+		ctx.getSource().getPlayer().sendMessage(new TranslatableText("Elytra Swap is %s", ElytraSwap.playerSwapDataHandler.get(ctx.getSource().getPlayer()) ? "Enabled" : "Disabled"));
 
-        return 1;
-    }
+		return 1;
+	}
 }
