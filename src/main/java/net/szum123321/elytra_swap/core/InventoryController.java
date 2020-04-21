@@ -18,30 +18,27 @@
 
 package net.szum123321.elytra_swap.core;
 
-import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 
 public class InventoryController {
-	public void replaceElytraWithChestPlate(FlatInventory inv) {
-		if (!inv.getItemStack(inv.getChestplateSlotId()).getItem().getName().getString().toLowerCase().contains("chestplate")) {
+	public static void replaceElytraWithChestPlate(FlatInventory inv) {
+
+		if (!inv.getItemStack(inv.getChestplateSlotId()).getItem().toString().toLowerCase().contains("chestplate")) {
 			int chestplateSlot;
 
 			for(chestplateSlot = 0; chestplateSlot < inv.getSize(); chestplateSlot++) {
-				if (inv.getItemStack(chestplateSlot).getItem().getName().getString().toLowerCase().contains("chestplate"))
+				if (inv.getItemStack(chestplateSlot).getItem().toString().toLowerCase().contains("chestplate"))
 					break;
 			}
 
 			if (chestplateSlot >= inv.getSize() - 1)
 				return;
 
-			ItemStack chestplate = inv.getItemStack(chestplateSlot).copy();
-
-			inv.setItemStack(chestplateSlot, inv.getItemStack(inv.getChestplateSlotId()).copy());
-			inv.setItemStack(inv.getChestplateSlotId(), chestplate);
+			inv.switchItemStacks(chestplateSlot, inv.getChestplateSlotId());
 		}
 	}
 
-	public void replaceChestPlateWithElytra(FlatInventory inv) {
+	public static void replaceChestPlateWithElytra(FlatInventory inv) {
 		if (inv.getItemStack(inv.getElytraSlotId()).getItem() != Items.ELYTRA) {
 			int elytraSlot;
 
@@ -53,14 +50,11 @@ public class InventoryController {
 			if (elytraSlot >= inv.getSize() - 1)
 				return;
 
-			ItemStack elytra = inv.getItemStack(elytraSlot).copy();
-
-			inv.setItemStack(elytraSlot, inv.getItemStack(inv.getElytraSlotId()).copy());
-			inv.setItemStack(inv.getElytraSlotId(), elytra);
+			inv.switchItemStacks(elytraSlot, inv.getElytraSlotId());
 		}
 	}
 
-	public boolean doesPlayerHasElytra(FlatInventory inv) {
+	public static boolean doesPlayerHaveElytra(FlatInventory inv) {
 		return inv.hasElytra();
 	}
 }

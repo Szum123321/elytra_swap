@@ -36,4 +36,7 @@ public class ConfigHandler {
 
 	@Comment(value = "\nMinimal height that player has to have above him in order to use firework\n")
 	public int requiredHeightAbovePlayer = 15;
+
+
+	public boolean lookThroughShulkers = true;
 }

@@ -20,6 +20,7 @@ package net.szum123321.elytra_swap.mixin;
 
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket;
 import net.minecraft.util.PacketByteBuf;
@@ -37,8 +38,9 @@ public class ClientServerJoin {
         if (ClientSidePacketRegistry.INSTANCE.canServerReceive(ElytraSwap.DUMMY_PACKAGE)) {
             PacketByteBuf passedData = new PacketByteBuf(Unpooled.buffer());
             passedData.writeBoolean(ElytraSwapClientInit.swapStateHandler.get());
+            passedData.writeByte(FabricLoader.getInstance().isModLoaded("trinkets") ? 1 : -1);
 
-            ClientSidePacketRegistry.INSTANCE.sendToServer(ElytraSwap.SET_SWAP_ENABLE, passedData);
+            ClientSidePacketRegistry.INSTANCE.sendToServer(ElytraSwap.CLIENT_JOIN_PACKET, passedData);
 
             ElytraSwapClientInit.serverHasMod = true;
         } else {

@@ -33,16 +33,16 @@ public class SwapEnablementCommandRegister {
 				.then(CommandManager.argument("Operation", BoolArgumentType.bool())
 						.executes(SwapEnablementCommandRegister::execute)
 				).executes(ctx -> {
-					ctx.getSource().getPlayer().sendMessage(new TranslatableText("Available options are: true(enable), false(disable). Now Elytra Swap is: %s", ElytraSwap.playerSwapDataHandler.get(ctx.getSource().getPlayer()) ? "Enabled" : "Disabled"));
+					ctx.getSource().getPlayer().sendMessage(new TranslatableText("Available options are: true(enable), false(disable). Now Elytra Swap is: %s", ElytraSwap.serverSwapStateHandler.getSwapState(ctx.getSource().getPlayer()) ? "Enabled" : "Disabled"));
 					return 1;
 				})
 		));
 	}
 
 	private static int execute(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
-		ElytraSwap.playerSwapDataHandler.set(ctx.getSource().getPlayer(), BoolArgumentType.getBool(ctx, "Operation"));
+		ElytraSwap.serverSwapStateHandler.setSwapState(ctx.getSource().getPlayer(), BoolArgumentType.getBool(ctx, "Operation"), true);
 
-		ctx.getSource().getPlayer().sendMessage(new TranslatableText("Elytra Swap is %s", ElytraSwap.playerSwapDataHandler.get(ctx.getSource().getPlayer()) ? "Enabled" : "Disabled"));
+		ctx.getSource().getPlayer().sendMessage(new TranslatableText("Elytra Swap is %s", ElytraSwap.serverSwapStateHandler.getSwapState(ctx.getSource().getPlayer()) ? "Enabled" : "Disabled"));
 
 		return 1;
 	}

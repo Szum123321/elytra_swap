@@ -31,6 +31,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.DefaultedList;
+import net.szum123321.elytra_swap.ElytraSwap;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,28 +40,32 @@ import java.util.Map;
 
 /*
 	This class turns players' inventory into flat list (including shulkers and trinkets).
+	Basically a inventory abstraction layer.
 */
 
 public class FlatInventory {
-	// in case someone would like to make this into library, please keep those fields protected.
-	protected boolean trinketsSupport;
-	protected List<Slot> slots = new ArrayList<>();
-	protected Map<SpecialSlots, Integer> specialSlots = new HashMap<>();
-	protected PlayerEntity player;
+	// in case someone would like to make this into library, please keep those fields protected and just add getter/setter.
+	private final boolean trinketsSupport;
+	protected final List<Slot> slots = new ArrayList<>();
+	protected final Map<SpecialSlots, Integer> specialSlots = new HashMap<>();
+	protected final PlayerEntity player;
 
 	public FlatInventory(PlayerEntity player) {
 		this.player = player;
-		this.trinketsSupport = FabricLoader.getInstance().isModLoaded("trinkets");
+		this.trinketsSupport = FabricLoader.getInstance().isModLoaded("trinkets") &&
+								!(ElytraSwap.serverSwapStateHandler.getTrinketsSupport(player) == ServerSwapStateHandler.Tristate.FALSE);
 
 		for (int i = 0; i < player.inventory.getInvSize(); i++) {
 			if (i == 38) //Chestplate slot
 				specialSlots.put(SpecialSlots.CHESTPLATE, slots.size());
 
-			slots.add(new Slot(1, -1, i));
+			slots.add(new Slot(InventoryType.NORMAL, i));
 
-			if (player.inventory.getInvStack(i).getItem() instanceof BlockItem && ((BlockItem) player.inventory.getInvStack(i).getItem()).getBlock() instanceof ShulkerBoxBlock) {
+			if (player.inventory.getInvStack(i).getItem() instanceof BlockItem &&
+					((BlockItem) player.inventory.getInvStack(i).getItem()).getBlock() instanceof ShulkerBoxBlock &&
+					ElytraSwap.config.lookThroughShulkers) {
 				for (int j = 0; j < 27; j++)
-					slots.add(new Slot(1, j, i));
+					slots.add(new Slot(InventoryType.NORMAL, i, j));
 			}
 		}
 
@@ -71,11 +76,13 @@ public class FlatInventory {
 				if (TrinketSlots.getAllSlots().get(i).getName().equals(Slots.CAPE))
 					specialSlots.put(SpecialSlots.CAPE, slots.size());
 
-				slots.add(new Slot(2, -1, i));
+				slots.add(new Slot(InventoryType.TRINKETS, i));
 
-				if (tInv.getInvStack(i).getItem() instanceof BlockItem && ((BlockItem) tInv.getInvStack(i).getItem()).getBlock() instanceof ShulkerBoxBlock) {
+				if (tInv.getInvStack(i).getItem() instanceof BlockItem &&
+						((BlockItem) tInv.getInvStack(i).getItem()).getBlock() instanceof ShulkerBoxBlock &&
+						ElytraSwap.config.lookThroughShulkers) {
 					for (int j = 0; j < 27; j++)
-						slots.add(new Slot(2, j, i));
+						slots.add(new Slot(InventoryType.TRINKETS, i, j));
 				}
 			}
 		}
@@ -85,17 +92,18 @@ public class FlatInventory {
 		return slots.size();
 	}
 
-	public void setItemStack(int index, ItemStack stack) {
-		if (index >= slots.size())
-			return;
+	public void setItemStack(int index, ItemStack stack) throws IndexOutOfBoundsException {
+		if (index >= slots.size() || index < 0)
+			throw new IndexOutOfBoundsException("Called setItemStack with index = " + index +
+					", which exceeds allowed bounds of: 0 to: " + (slots.size() - 1));
 
 		Slot slot = slots.get(index);
 
-		if (slot.invType == 1) { // standard inventory
+		if (slot.invType == InventoryType.NORMAL) { // standard inventory
 			if (slot.shulkerIndex == -1) {  // is not a shulker
-				player.inventory.setInvStack(slot.index, stack);
+				player.inventory.setInvStack(slot.slotIndex, stack);
 			} else {  // it is a shulker so get stack form it
-				ItemStack shulker = player.inventory.getInvStack(slot.index);
+				ItemStack shulker = player.inventory.getInvStack(slot.slotIndex);
 
 				if (shulker.getTag() != null) {
 					DefaultedList<ItemStack> shulkerInventory = DefaultedList.ofSize(27, ItemStack.EMPTY);
@@ -106,15 +114,13 @@ public class FlatInventory {
 					CompoundTag tag = new CompoundTag();
 					Inventories.toTag(tag, shulkerInventory, false);
 					shulker.putSubTag("BlockEntityTag", tag);
-
-					player.inventory.setInvStack(slot.index, shulker);
 				}
 			}
-		} else if (slot.invType == 2 && trinketsSupport) { // trinkets inventory
+		} else if (slot.invType == InventoryType.TRINKETS && trinketsSupport) { // trinkets inventory
 			if (slot.shulkerIndex == -1) {
-				TrinketsApi.getTrinketsInventory(player).setInvStack(slot.index, stack);
+				TrinketsApi.getTrinketsInventory(player).setInvStack(slot.slotIndex, stack);
 			} else {
-				ItemStack shulker = TrinketsApi.getTrinketsInventory(player).getInvStack(slot.index);
+				ItemStack shulker = TrinketsApi.getTrinketsInventory(player).getInvStack(slot.slotIndex);
 
 				if (shulker.getTag() != null) {
 					DefaultedList<ItemStack> shulkerInventory = DefaultedList.ofSize(27, ItemStack.EMPTY);
@@ -125,24 +131,23 @@ public class FlatInventory {
 					CompoundTag tag = new CompoundTag();
 					Inventories.toTag(tag, shulkerInventory, false);
 					shulker.putSubTag("BlockEntityTag", tag);
-
-					player.inventory.setInvStack(slot.index, shulker);
 				}
 			}
 		}
 	}
 
-	public ItemStack getItemStack(int index) {
-		if (index >= slots.size())
-			return null;
+	public ItemStack getItemStack(int index) throws IndexOutOfBoundsException {
+		if (index >= slots.size() || index < 0)
+			throw new IndexOutOfBoundsException("Called getItemStack with index = " + index +
+					", which exceeds allowed bounds of: 0 to: " + (slots.size() - 1));
 
 		Slot slot = slots.get(index);
 
-		if (slot.invType == 1) { // standard inventory
+		if (slot.invType == InventoryType.NORMAL) { // standard inventory
 			if (slot.shulkerIndex == -1) {  // is not a shulker
-				return player.inventory.getInvStack(slot.index);
-			} else {  // it is a shulker so get stack form it
-				ItemStack shulker = player.inventory.getInvStack(slot.index);
+				return player.inventory.getInvStack(slot.slotIndex);
+			} else {  // it is a shulker so get the stack form it
+				ItemStack shulker = player.inventory.getInvStack(slot.slotIndex);
 
 				if (shulker.getTag() != null) {
 					DefaultedList<ItemStack> shulkerInventory = DefaultedList.ofSize(27, ItemStack.EMPTY);
@@ -151,11 +156,11 @@ public class FlatInventory {
 					return shulkerInventory.get(slot.shulkerIndex);
 				}
 			}
-		} else if (slot.invType == 2 && trinketsSupport) { // trinkets inventory
+		} else if (slot.invType == InventoryType.TRINKETS && trinketsSupport) { // trinkets inventory
 			if (slot.shulkerIndex == -1) {
-				return TrinketsApi.getTrinketsInventory(player).getInvStack(slot.index);
+				return TrinketsApi.getTrinketsInventory(player).getInvStack(slot.slotIndex);
 			} else {
-				ItemStack shulker = TrinketsApi.getTrinketsInventory(player).getInvStack(slot.index);
+				ItemStack shulker = TrinketsApi.getTrinketsInventory(player).getInvStack(slot.slotIndex);
 
 				if (shulker.getTag() != null) {
 					DefaultedList<ItemStack> shulkerInventory = DefaultedList.ofSize(27, ItemStack.EMPTY);
@@ -166,7 +171,14 @@ public class FlatInventory {
 			}
 		}
 
-		return null; // something went horribly wrong!
+		return ItemStack.EMPTY; // something went horribly wrong!
+	}
+
+	public void switchItemStacks(int a, int b) {
+		ItemStack temp = getItemStack(a).copy();
+
+		setItemStack(a, getItemStack(b));
+		setItemStack(b, temp);
 	}
 
 	public boolean hasElytra() {
@@ -193,15 +205,26 @@ public class FlatInventory {
 		CAPE, CHESTPLATE
 	}
 
-	private class Slot {
-		public int invType;  // 1 - normal, 2 - trinket
-		public int shulkerIndex; // id of item in shulker
-		public int index; // id of slot in given inventory
+	private enum InventoryType {
+		NORMAL,
+		TRINKETS;
+	}
 
-		public Slot(int invType, int shulkerIndex, int index) {
+	private class Slot {
+		public final InventoryType invType;  // 1 - normal, 2 - trinket
+		public final int shulkerIndex; // id of item in shulker
+		public final int slotIndex; // id of slot in given inventory
+
+		public Slot(InventoryType invType, int slotIndex, int shulkerIndex) {
 			this.invType = invType;
 			this.shulkerIndex = shulkerIndex;
-			this.index = index;
+			this.slotIndex = slotIndex;
+		}
+
+		public Slot(InventoryType invType, int slotIndex) {
+			this.invType = invType;
+			this.shulkerIndex = -1;
+			this.slotIndex = slotIndex;
 		}
 	}
 }

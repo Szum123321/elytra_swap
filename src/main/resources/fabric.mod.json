@@ -1,36 +1,33 @@
 {
-  "schemaVersion": 1,
-  "id": "elytra_swap",
-  "version": "${version}",
-
-  "name": "Elytra Swap",
-  "description": "This mod automatically swaps your main armor with elytra when falling",
-  "authors": [
-    "Szum123321"
-  ],
-  "contact": {
-    "homepage": "https://www.curseforge.com/minecraft/mc-mods/elytra-swap",
-    "sources": "https://github.com/Szum123321/elytra_swap"
-  },
-
-  "license": "GPLv3",
-
-  "environment": "*",
-  "entrypoints": {
-    "main": [
-      "net.szum123321.elytra_swap.ElytraSwap"
-    ],
-    "client": [
-      "net.szum123321.elytra_swap.client.ElytraSwapClientInit"
-    ]
-  },
-  "mixins": [
-    "elytra_swap.mixins.json"
-  ],
-
-  "depends": {
-    "fabricloader": ">=0.4.0",
-    "fabric": "*",
-    "minecraft": "1.15.*"
-  }
+	"schemaVersion": 1,
+	"id": "elytra_swap",
+	"version": "${version}",
+	"name": "Elytra Swap",
+	"description": "This mod automatically swaps your main armor with elytra when falling and more!",
+	"authors": [
+		"Szum123321"
+	],
+	"contact": {
+		"homepage": "https://www.curseforge.com/minecraft/mc-mods/elytra-swap",
+		"sources": "https://github.com/Szum123321/elytra_swap"
+	},
+	"license": "GPLv3",
+	"icon": "assets/elytra_swap/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"net.szum123321.elytra_swap.ElytraSwap"
+		],
+		"client": [
+			"net.szum123321.elytra_swap.client.ElytraSwapClientInit"
+		]
+	},
+	"mixins": [
+		"elytra_swap.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.4.0",
+		"fabric": "*",
+		"minecraft": "1.15.*"
+	}
 }

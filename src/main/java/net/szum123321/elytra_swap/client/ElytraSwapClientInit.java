@@ -25,7 +25,7 @@ import net.fabricmc.fabric.api.client.keybinding.KeyBindingRegistry;
 import net.fabricmc.fabric.api.event.client.ClientTickCallback;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.LiteralText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.PacketByteBuf;
 import net.szum123321.elytra_swap.ElytraSwap;
@@ -67,12 +67,12 @@ public class ElytraSwapClientInit implements ClientModInitializer {
 					lastState = true;
 
 					if (e.player != null)
-						e.player.sendMessage(new TranslatableText("Elytra Swap in now %s", swapStateHandler.get() ? "Enabled" : "Disabled"));
+						e.player.sendMessage(new LiteralText("Elytra Swap in now: " + (swapStateHandler.get() ? "Enabled" : "Disabled")));
 
 					PacketByteBuf passedData = new PacketByteBuf(Unpooled.buffer());
 					passedData.writeBoolean(swapStateHandler.get());
 
-					ClientSidePacketRegistry.INSTANCE.sendToServer(ElytraSwap.SET_SWAP_ENABLE, passedData);
+					ClientSidePacketRegistry.INSTANCE.sendToServer(ElytraSwap.SET_SWAP_STATE, passedData);
 				}
 			} else {
 				lastState = false;
@@ -81,6 +81,16 @@ public class ElytraSwapClientInit implements ClientModInitializer {
 	}
 
 	private void registerPackets() {
+		ClientSidePacketRegistry.INSTANCE.register(ElytraSwap.SET_SWAP_STATE, (packetContext, packetByteBuf) -> {
+			boolean state = packetByteBuf.readBoolean();
+
+			packetContext.getTaskQueue().execute(() -> {
+				if(state != swapStateHandler.get()) {
+					swapStateHandler.set(state);
+				}
+			});
+		});
+
 		ClientSidePacketRegistry.INSTANCE.register(ElytraSwap.DUMMY_PACKAGE, ((packetContext, packetByteBuf) -> {}));
 	}
 }
