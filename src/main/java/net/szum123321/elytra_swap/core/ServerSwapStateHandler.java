@@ -74,7 +74,7 @@ public class ServerSwapStateHandler {
         FALSE,
         UNKNOWN;
 
-        public static Tristate get(short val) {
+        public static Tristate get(int val) {
             switch (val) {
                 case 1:
                     return TRUE;
@@ -85,6 +85,10 @@ public class ServerSwapStateHandler {
                 default:
                     return UNKNOWN;
             }
+        }
+
+        public static Tristate get(boolean val) {
+            return val ? TRUE : FALSE;
         }
     }
 

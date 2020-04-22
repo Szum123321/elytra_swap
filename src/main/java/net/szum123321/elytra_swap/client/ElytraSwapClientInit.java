@@ -31,6 +31,9 @@ import net.minecraft.util.PacketByteBuf;
 import net.szum123321.elytra_swap.ElytraSwap;
 import org.lwjgl.glfw.GLFW;
 
+/*
+	Client side entry point. All it does is it registers keybind and adds packet listener.
+*/
 public class ElytraSwapClientInit implements ClientModInitializer {
 	public static ClientSwapStateHandler swapStateHandler;
 

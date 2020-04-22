@@ -44,6 +44,7 @@ public abstract class TakeoffHandler extends Item {
 		super(settings);
 	}
 
+	// function below gets invoked only when player uses firework while standing on ground and clicks in the air
 	@Inject(method = "use", at = @At(value = "RETURN", ordinal = 1))
 	private void fireworkUsageHandler(World world, PlayerEntity player, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> ci) {
 		if (player instanceof ServerPlayerEntity &&
@@ -52,6 +53,7 @@ public abstract class TakeoffHandler extends Item {
 			ElytraSwap.serverSwapStateHandler.getSwapState(player) &&
 			(ServerSidePacketRegistry.INSTANCE.canPlayerReceive(player, ElytraSwap.DUMMY_PACKAGE) || ElytraSwap.config.noModPlayersHandlingMethod == 1) &&
 			InventoryController.doesPlayerHaveElytra(new FlatInventory(player))) {
+
 			ServerSidePacketRegistry.INSTANCE.sendToPlayer(player,
 					new EntityVelocityUpdateS2CPacket(player.getEntityId(),
 							new Vec3d(-Math.sin(Math.toRadians(player.yaw)) * ElytraSwap.config.kickSpeed,
@@ -61,12 +63,11 @@ public abstract class TakeoffHandler extends Item {
 					)
 			);
 
-			FireworkEntity firework = new FireworkEntity(world, player.getMainHandStack(), player);
-
+			FireworkEntity firework = new FireworkEntity(world, player.getStackInHand(hand), player);
 			world.spawnEntity(firework);
 
 			if (!player.isCreative())
-				player.getMainHandStack().decrement(1);
+				player.getStackInHand(hand).decrement(1);
 		}
 	}
 

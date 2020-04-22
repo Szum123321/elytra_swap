@@ -40,15 +40,15 @@ import java.util.Map;
 
 /*
 	This class turns players' inventory into flat list (including shulkers and trinkets).
-	Basically a inventory abstraction layer.
+	Basically a inventory abstraction layer. :)
+	Compatibility with other mods can be easily added
 */
 
 public class FlatInventory {
-	// in case someone would like to make this into library, please keep those fields protected and just add getter/setter.
 	private final boolean trinketsSupport;
-	protected final List<Slot> slots = new ArrayList<>();
-	protected final Map<SpecialSlots, Integer> specialSlots = new HashMap<>();
-	protected final PlayerEntity player;
+	private final List<Slot> slots = new ArrayList<>();
+	private final Map<SpecialSlots, Integer> specialSlots = new HashMap<>();
+	private final PlayerEntity player;
 
 	public FlatInventory(PlayerEntity player) {
 		this.player = player;
@@ -91,6 +91,8 @@ public class FlatInventory {
 	public int getSize() {
 		return slots.size();
 	}
+
+	public PlayerEntity getPlayer() { return player; }
 
 	public void setItemStack(int index, ItemStack stack) throws IndexOutOfBoundsException {
 		if (index >= slots.size() || index < 0)
@@ -207,7 +209,7 @@ public class FlatInventory {
 
 	private enum InventoryType {
 		NORMAL,
-		TRINKETS;
+		TRINKETS
 	}
 
 	private class Slot {

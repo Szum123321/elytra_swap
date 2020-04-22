@@ -20,6 +20,10 @@ package net.szum123321.elytra_swap.core;
 
 import net.minecraft.item.Items;
 
+/*
+	Small utility class for actually swapping elytra with chestplate and back.
+*/
+
 public class InventoryController {
 	public static void replaceElytraWithChestPlate(FlatInventory inv) {
 

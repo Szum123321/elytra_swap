@@ -33,12 +33,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ClientPlayNetworkHandler.class)
 public class ClientServerJoin {
+
+    /*
+        This method get called every time player joins a server in order to find out if server
+        has Elytra Swap installed, and if so, to send packet informing if player has Elytra Swap enabled
+        and has Trinkets installed.
+     */
     @Inject(method = "onGameJoin", at= @At("RETURN"))
     private void join(GameJoinS2CPacket packet, CallbackInfo ci) {
         if (ClientSidePacketRegistry.INSTANCE.canServerReceive(ElytraSwap.DUMMY_PACKAGE)) {
             PacketByteBuf passedData = new PacketByteBuf(Unpooled.buffer());
             passedData.writeBoolean(ElytraSwapClientInit.swapStateHandler.get());
-            passedData.writeByte(FabricLoader.getInstance().isModLoaded("trinkets") ? 1 : -1);
+            passedData.writeBoolean(FabricLoader.getInstance().isModLoaded("trinkets"));
 
             ClientSidePacketRegistry.INSTANCE.sendToServer(ElytraSwap.CLIENT_JOIN_PACKET, passedData);
 

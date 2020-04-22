@@ -27,6 +27,11 @@ import net.szum123321.elytra_swap.command.SwapEnablementCommandRegister;
 import net.szum123321.elytra_swap.core.ConfigHandler;
 import net.szum123321.elytra_swap.core.ServerSwapStateHandler;
 
+/*
+    Main class. Mostly static variables and initialization stuff.
+    If you are looking for client init, head to client/ElytraSwapClientInit.
+*/
+
 public class ElytraSwap implements ModInitializer {
     public static final String MOD_ID = "elytra_swap";
 
@@ -55,7 +60,7 @@ public class ElytraSwap implements ModInitializer {
     private void registerSwapToggle() {
         ServerSidePacketRegistry.INSTANCE.register(CLIENT_JOIN_PACKET, (packetContext, packetByteBuf) -> {
             boolean val = packetByteBuf.readBoolean();
-            byte hasTrinkets = packetByteBuf.readByte();
+            boolean hasTrinkets = packetByteBuf.readBoolean();
 
             packetContext.getTaskQueue().execute(() -> {
                 if (!serverSwapStateHandler.isMapped(packetContext.getPlayer()))
@@ -66,9 +71,7 @@ public class ElytraSwap implements ModInitializer {
         ServerSidePacketRegistry.INSTANCE.register(SET_SWAP_STATE, (packetContext, packetByteBuf) -> {
             boolean val = packetByteBuf.readBoolean();
 
-            packetContext.getTaskQueue().execute(() -> {
-                serverSwapStateHandler.setSwapState(packetContext.getPlayer(), val, false);
-            });
+            packetContext.getTaskQueue().execute(() -> serverSwapStateHandler.setSwapState(packetContext.getPlayer(), val, false));
         });
 
         ServerSidePacketRegistry.INSTANCE.register(ElytraSwap.DUMMY_PACKAGE, ((packetContext, packetByteBuf) -> {}));

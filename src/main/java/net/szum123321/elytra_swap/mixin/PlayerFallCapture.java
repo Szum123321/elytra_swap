@@ -32,6 +32,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+/*
+	This class takes care of checking if we should swap elytra or not.
+*/
+
 @Mixin(ServerPlayerEntity.class)
 public abstract class PlayerFallCapture extends LivingEntity {
 	protected PlayerFallCapture(EntityType<? extends LivingEntity> type, World world) {
@@ -48,9 +52,9 @@ public abstract class PlayerFallCapture extends LivingEntity {
 
 			FlatInventory flatInventory = new FlatInventory(player);
 
-			if (InventoryController.doesPlayerHaveElytra(flatInventory)) {
-				if (!onGround && !player.isClimbing() && !player.isSwimming()) {
-					if (heightDifference < 0 && getFallHeight(player.getBlockPos()) > 5) {
+			if (InventoryController.doesPlayerHaveElytra(flatInventory)) {  // this line checks if player has elytra
+				if (!onGround && !player.isClimbing() && !player.isSwimming()) {  //while this line makes sure that player is in the air, is not climbing and is not swimming
+					if (heightDifference < 0 && getFallHeight(player.getBlockPos()) > 4) { // and here we check i player is falling down and there are at least 5 blocks of empty space below him
 						InventoryController.replaceChestPlateWithElytra(flatInventory);
 						setFlag(7, true);    // thanks to this line you do not have to press space in order to start gliding
 					}
