@@ -31,9 +31,15 @@ public class ConfigHandler {
 	)
 	public int noModPlayersHandlingMethod = 1;
 
-	@Comment(value = "\nThis is how much vertical speed player will gain as a result of using firework rocket\n")
+	@Comment(value = "\nThis is how much vertical speed player will gain as a result of using firework rocket\n" +
+						"default: 1.7\n")
 	public float kickSpeed = 1.7F;
 
-	@Comment(value = "\nMinimal height that player has to have above him in order to use firework\n")
+	@Comment(value = "\nMinimal height that player has to have above him in order to use firework\n" +
+						"default: 15\n")
 	public int requiredHeightAbovePlayer = 15;
+
+	@Comment(value = "\nIf you set this to false Elytra Swap won't look for chestplate or elytra inside shulker boxes.\n" +
+						"default: true\n")
+	public boolean lookThroughShulkers = true;
 }

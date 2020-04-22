@@ -18,86 +18,47 @@
 
 package net.szum123321.elytra_swap.core;
 
-import dev.emi.trinkets.api.*;
-import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.item.ArmorItem;
-import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 
+/*
+	Small utility class for actually swapping elytra with chestplate and back.
+*/
+
 public class InventoryController {
-	private boolean isTrinketsInstalled;
+	public static void replaceElytraWithChestPlate(FlatInventory inv) {
 
-	public InventoryController() {
-		isTrinketsInstalled = FabricLoader.getInstance().isModLoaded("trinkets");
-	}
+		if (!inv.getItemStack(inv.getChestplateSlotId()).getItem().toString().toLowerCase().contains("chestplate")) {
+			int chestplateSlot;
 
-	public void replaceElytraWithChestPlate(PlayerEntity player) {
-		if (!isTrinketsInstalled && player.inventory.armor.get(2).getItem() == Items.ELYTRA) {
-			for (int i = 0; i < player.inventory.getInvSize(); i++) {
-				if (player.inventory.getInvStack(i).getItem() instanceof ArmorItem &&
-						((ArmorItem) player.inventory.getInvStack(i).getItem()).getSlotType() == EquipmentSlot.CHEST) {  //kinda sketchy but should make this compatible with modded armor
-					ItemStack elytra = player.inventory.armor.get(2).copy();
-
-					player.inventory.armor.set(2, player.inventory.getInvStack(i).copy());
-					player.inventory.setInvStack(i, elytra);
-
+			for(chestplateSlot = 0; chestplateSlot < inv.getSize(); chestplateSlot++) {
+				if (inv.getItemStack(chestplateSlot).getItem().toString().toLowerCase().contains("chestplate"))
 					break;
-				}
 			}
+
+			if (chestplateSlot >= inv.getSize() - 1)
+				return;
+
+			inv.switchItemStacks(chestplateSlot, inv.getChestplateSlotId());
 		}
 	}
 
-	public void replaceChestPlateWithElytra(PlayerEntity player) {
-		if (isTrinketsInstalled) {
-			Inventory inv = TrinketsApi.getTrinketsInventory(player);
+	public static void replaceChestPlateWithElytra(FlatInventory inv) {
+		if (inv.getItemStack(inv.getElytraSlotId()).getItem() != Items.ELYTRA) {
+			int elytraSlot;
 
-			if (inv.getInvStack(getTrinketElytraSlotId()).getItem() != Items.ELYTRA) {
-				for (int i = 0; i < player.inventory.getInvSize(); i++) {
-					if (player.inventory.getInvStack(i).getItem() == Items.ELYTRA) {
-						ItemStack elytra = player.inventory.getInvStack(i).copy();
-
-						player.inventory.setInvStack(i, inv.getInvStack(getTrinketElytraSlotId()).copy());
-						inv.setInvStack(getTrinketElytraSlotId(), elytra);
-
-						break;
-					}
-				}
-			}
-		} else if (player.inventory.armor.get(2).getItem() != Items.ELYTRA) {
-			for (int i = 0; i < player.inventory.getInvSize(); i++) {
-				if (player.inventory.getInvStack(i).getItem() == Items.ELYTRA) {
-					ItemStack elytra = player.inventory.getInvStack(i).copy();
-
-					player.inventory.setInvStack(i, player.inventory.armor.get(2).copy());
-					player.inventory.armor.set(2, elytra);
-
+			for (elytraSlot = 0; elytraSlot < inv.getSize(); elytraSlot++) {
+				if (inv.getItemStack(elytraSlot).getItem() == Items.ELYTRA)
 					break;
-				}
 			}
+
+			if (elytraSlot >= inv.getSize() - 1)
+				return;
+
+			inv.switchItemStacks(elytraSlot, inv.getElytraSlotId());
 		}
 	}
 
-	public boolean doesPlayerHasElytra(PlayerEntity player) {
-		boolean val = false;
-
-		if (isTrinketsInstalled)
-			val = TrinketsApi.getTrinketsInventory(player).getInvStack(getTrinketElytraSlotId()).getItem() == Items.ELYTRA;
-
-
-		val |= player.inventory.contains(new ItemStack(Items.ELYTRA));
-
-		return val;
-	}
-
-	private int getTrinketElytraSlotId() {
-		for (int i = 0; i < TrinketSlots.getSlotCount(); i++) {
-			if (TrinketSlots.getAllSlots().get(i).getName().equals(Slots.CAPE))
-				return i;
-		}
-
-		return -1;
+	public static boolean doesPlayerHaveElytra(FlatInventory inv) {
+		return inv.hasElytra();
 	}
 }

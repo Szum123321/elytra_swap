@@ -20,6 +20,7 @@ package net.szum123321.elytra_swap.mixin;
 
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.packet.s2c.play.GameJoinS2CPacket;
 import net.minecraft.util.PacketByteBuf;
@@ -32,13 +33,20 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ClientPlayNetworkHandler.class)
 public class ClientServerJoin {
+
+    /*
+        This method get called every time player joins a server in order to find out if server
+        has Elytra Swap installed, and if so, to send packet informing if player has Elytra Swap enabled
+        and has Trinkets installed.
+     */
     @Inject(method = "onGameJoin", at= @At("RETURN"))
     private void join(GameJoinS2CPacket packet, CallbackInfo ci) {
         if (ClientSidePacketRegistry.INSTANCE.canServerReceive(ElytraSwap.DUMMY_PACKAGE)) {
             PacketByteBuf passedData = new PacketByteBuf(Unpooled.buffer());
             passedData.writeBoolean(ElytraSwapClientInit.swapStateHandler.get());
+            passedData.writeBoolean(FabricLoader.getInstance().isModLoaded("trinkets"));
 
-            ClientSidePacketRegistry.INSTANCE.sendToServer(ElytraSwap.SET_SWAP_ENABLE, passedData);
+            ClientSidePacketRegistry.INSTANCE.sendToServer(ElytraSwap.CLIENT_JOIN_PACKET, passedData);
 
             ElytraSwapClientInit.serverHasMod = true;
         } else {

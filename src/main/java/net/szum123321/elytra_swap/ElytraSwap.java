@@ -22,24 +22,27 @@ import io.github.cottonmc.cotton.config.ConfigManager;
 import io.github.cottonmc.cotton.logging.ModLogger;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.util.Identifier;
 import net.szum123321.elytra_swap.command.SwapEnablementCommandRegister;
 import net.szum123321.elytra_swap.core.ConfigHandler;
-import net.szum123321.elytra_swap.core.PlayerSwapDataHandler;
-import net.szum123321.elytra_swap.core.InventoryController;
+import net.szum123321.elytra_swap.core.ServerSwapStateHandler;
+
+/*
+    Main class. Mostly static variables and initialization stuff.
+    If you are looking for client init, head to client/ElytraSwapClientInit.
+*/
 
 public class ElytraSwap implements ModInitializer {
     public static final String MOD_ID = "elytra_swap";
 
-    public static final Identifier SET_SWAP_ENABLE = new Identifier(MOD_ID, "set_swap");
+    public static final Identifier CLIENT_JOIN_PACKET = new Identifier(MOD_ID, "client_join");
+    public static final Identifier SET_SWAP_STATE = new Identifier(MOD_ID, "set_state");
     public static final Identifier DUMMY_PACKAGE = new Identifier(MOD_ID, "dummy");
 
     public static ConfigHandler config;
     public static final ModLogger LOGGER = new ModLogger(MOD_ID);
 
-    public static InventoryController inventoryController;
-    public static PlayerSwapDataHandler playerSwapDataHandler;
+    public static ServerSwapStateHandler serverSwapStateHandler;
 
     @Override
     public void onInitialize() {
@@ -51,21 +54,24 @@ public class ElytraSwap implements ModInitializer {
 
         SwapEnablementCommandRegister.register();
 
-        inventoryController = new InventoryController();
-        playerSwapDataHandler = new PlayerSwapDataHandler();
+        serverSwapStateHandler = new ServerSwapStateHandler();
     }
 
     private void registerSwapToggle() {
-        ServerSidePacketRegistry.INSTANCE.register(SET_SWAP_ENABLE, (packetContext, attachedData) -> {
-            boolean val = attachedData.readBoolean();
+        ServerSidePacketRegistry.INSTANCE.register(CLIENT_JOIN_PACKET, (packetContext, packetByteBuf) -> {
+            boolean val = packetByteBuf.readBoolean();
+            boolean hasTrinkets = packetByteBuf.readBoolean();
 
             packetContext.getTaskQueue().execute(() -> {
-                if (playerSwapDataHandler.isMapped(packetContext.getPlayer())) {
-                    playerSwapDataHandler.set(packetContext.getPlayer(), val);
-                } else {
-                    playerSwapDataHandler.addPlayer(packetContext.getPlayer(), val);
-                }
+                if (!serverSwapStateHandler.isMapped(packetContext.getPlayer()))
+                    serverSwapStateHandler.addPlayer(packetContext.getPlayer(), val, ServerSwapStateHandler.Tristate.get(hasTrinkets));
             });
+        });
+
+        ServerSidePacketRegistry.INSTANCE.register(SET_SWAP_STATE, (packetContext, packetByteBuf) -> {
+            boolean val = packetByteBuf.readBoolean();
+
+            packetContext.getTaskQueue().execute(() -> serverSwapStateHandler.setSwapState(packetContext.getPlayer(), val, false));
         });
 
         ServerSidePacketRegistry.INSTANCE.register(ElytraSwap.DUMMY_PACKAGE, ((packetContext, packetByteBuf) -> {}));
