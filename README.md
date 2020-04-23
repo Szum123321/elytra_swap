@@ -1,5 +1,5 @@
 ## Elytra Swap
-[![Donwloads](https://cf.way2muchnoise.eu/full_353164_donwloads.svg) ![Available for](https://cf.way2muchnoise.eu/versions/353164.svg)](https://www.curseforge.com/minecraft/mc-mods/elytra-swap)
+[![Downloads](http://cf.way2muchnoise.eu/full_353164_donwloads.svg) ![Available for](http://cf.way2muchnoise.eu/versions/353164.svg)](https://www.curseforge.com/minecraft/mc-mods/elytra-swap)
 
 _Elytra Swap_ not only automatically switches chestplate with elytra when falling and landing, but also lets you easily take off by just clicking with firework in air. 
 
