@@ -38,11 +38,15 @@ public class ServerSwapStateHandler {
         data.put(player.getName().asString(), new Pair<>(val, trinkets));
     }
 
+    public void addDefaultPlayer(PlayerEntity player) {
+        addPlayer(player, ElytraSwap.config.noModPlayersDefaultState.getState(), Tristate.UNKNOWN);
+    }
+
     public Tristate getTrinketsSupport(PlayerEntity player) {
         if(isMapped(player)) {
             return data.get(player.getName().asString()).getSecond();
         } else {
-            addPlayer(player, true, Tristate.UNKNOWN);
+            addDefaultPlayer(player);
             return Tristate.UNKNOWN;
         }
     }
@@ -64,8 +68,8 @@ public class ServerSwapStateHandler {
         if(isMapped(player)) {
             return data.get(player.getName().asString()).getFirst();
         } else {
-            addPlayer(player, true, Tristate.UNKNOWN);
-            return true;
+            addDefaultPlayer(player);
+            return ElytraSwap.config.noModPlayersDefaultState.getState();
         }
     }
 
