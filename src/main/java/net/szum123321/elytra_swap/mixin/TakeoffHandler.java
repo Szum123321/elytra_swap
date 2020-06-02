@@ -47,6 +47,7 @@ public abstract class TakeoffHandler extends Item {
 	// function below gets invoked only when player uses firework while standing on ground and clicks in the air
 	@Inject(method = "use", at = @At(value = "RETURN", ordinal = 1))
 	private void fireworkUsageHandler(World world, PlayerEntity player, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> ci) {
+		System.out.println(checkSpaceOverPlayer(player, ElytraSwap.config.requiredHeightAbovePlayer));
 		if (player instanceof ServerPlayerEntity &&
 			player.onGround &&
 			checkSpaceOverPlayer(player, ElytraSwap.config.requiredHeightAbovePlayer) &&
@@ -73,7 +74,7 @@ public abstract class TakeoffHandler extends Item {
 
 
 	private boolean checkSpaceOverPlayer(PlayerEntity player, int requiredHeight) {
-		for (int i = 0; i <= requiredHeight; i++) {
+		for (int i = 1; i <= requiredHeight; i++) {
 			if (player.world.getBlockState(player.getBlockPos().up(i)).getMaterial().isSolid())
 				return false;
 		}

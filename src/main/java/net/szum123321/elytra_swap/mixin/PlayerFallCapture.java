@@ -19,7 +19,6 @@
 package net.szum123321.elytra_swap.mixin;
 
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
-import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -29,7 +28,6 @@ import net.szum123321.elytra_swap.ElytraSwap;
 import net.szum123321.elytra_swap.core.FlatInventory;
 import net.szum123321.elytra_swap.core.InventoryController;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -40,8 +38,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ServerPlayerEntity.class)
 public abstract class PlayerFallCapture extends LivingEntity {
-	@Shadow public abstract void playerTick();
-
 	protected PlayerFallCapture(EntityType<? extends LivingEntity> type, World world) {
 		super(type, world);
 	}
@@ -57,7 +53,7 @@ public abstract class PlayerFallCapture extends LivingEntity {
 			FlatInventory flatInventory = new FlatInventory(player);
 
 			if (InventoryController.doesPlayerHaveElytra(flatInventory)) {  // this line checks if player has elytra
-				if (!onGround && !player.isClimbing() && !player.isTouchingWater()) {  //while this line makes sure that player is in the air, is not climbing and is not swimming
+				if (!onGround && !isClimbing() && !isTouchingWater()) {  //while this line makes sure that player is in the air, is not climbing and is not swimming
 					if (heightDifference < 0 && getFallHeight(player.getBlockPos()) > 5) { // and here we check i player is falling down and there are at least 5 blocks of empty space below him
 						InventoryController.replaceChestPlateWithElytra(flatInventory);
 						setFlag(7, true);    // thanks to this line you do not have to press space in order to start gliding
