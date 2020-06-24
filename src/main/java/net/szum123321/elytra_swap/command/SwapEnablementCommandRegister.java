@@ -30,17 +30,17 @@ import net.szum123321.elytra_swap.ElytraSwap;
 public class SwapEnablementCommandRegister {
 	public static void register() {
 		CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> dispatcher.register(CommandManager.literal("swap")
-			.then(CommandManager.argument("Operation", BoolArgumentType.bool())
+			.then(CommandManager.argument("operation", BoolArgumentType.bool())
 					.executes(SwapEnablementCommandRegister::execute)
 			).executes(ctx -> {
 				ctx.getSource().getPlayer().sendMessage(new TranslatableText("Available options are: true(enable), false(disable). Now Elytra Swap is: %s", ElytraSwap.serverSwapStateHandler.getSwapState(ctx.getSource().getPlayer()) ? "Enabled" : "Disabled"),false);
 				return 1;
 			})
-	));
+		));
 	}
 
 	private static int execute(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
-		ElytraSwap.serverSwapStateHandler.setSwapState(ctx.getSource().getPlayer(), BoolArgumentType.getBool(ctx, "Operation"), true);
+		ElytraSwap.serverSwapStateHandler.setSwapState(ctx.getSource().getPlayer(), BoolArgumentType.getBool(ctx, "operation"), true);
 
 		ctx.getSource().getPlayer().sendMessage(new TranslatableText("Elytra Swap is %s", ElytraSwap.serverSwapStateHandler.getSwapState(ctx.getSource().getPlayer()) ? "Enabled" : "Disabled"), false);
 
