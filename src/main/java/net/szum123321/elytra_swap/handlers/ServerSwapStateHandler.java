@@ -16,35 +16,35 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-package net.szum123321.elytra_swap.core;
+package net.szum123321.elytra_swap.handlers;
 
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.PacketByteBuf;
+import net.minecraft.network.PacketByteBuf;
 import net.szum123321.elytra_swap.ElytraSwap;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class ServerSwapStateHandler {
-    private final Map<String, Pair<Boolean, Tristate>> data = new HashMap<>();
+    private final Map<String, PlayerEntry> data = new HashMap<>();
 
     public boolean isMapped(PlayerEntity player){
         return data.containsKey(player.getName().asString());
     }
 
     public void addPlayer(PlayerEntity player, boolean val, Tristate trinkets){
-        data.put(player.getName().asString(), new Pair<>(val, trinkets));
+        data.put(player.getName().asString(), new PlayerEntry(trinkets, val));
     }
 
     public void addDefaultPlayer(PlayerEntity player) {
-        addPlayer(player, ElytraSwap.config.noModPlayersDefaultState.getState(), Tristate.UNKNOWN);
+        addPlayer(player, ElytraSwap.CONFIG.noModPlayersDefaultState.getState(), Tristate.UNKNOWN);
     }
 
     public Tristate getTrinketsSupport(PlayerEntity player) {
         if(isMapped(player)) {
-            return data.get(player.getName().asString()).getSecond();
+            return data.get(player.getName().asString()).getHasTrinkets();
         } else {
             addDefaultPlayer(player);
             return Tristate.UNKNOWN;
@@ -52,8 +52,8 @@ public class ServerSwapStateHandler {
     }
 
     public void setSwapState(PlayerEntity player, boolean val, boolean internal){
-        if(data.get(player.getName().asString()).getFirst() != val) {
-          data.get(player.getName().asString()).setFirst(val);
+        if(data.get(player.getName().asString()).getSwapState() != val) {
+          data.get(player.getName().asString()).setSwapState(val);
 
             if(internal) {
                 PacketByteBuf packetByteBuf = new PacketByteBuf(Unpooled.buffer());
@@ -66,10 +66,32 @@ public class ServerSwapStateHandler {
 
     public boolean getSwapState(PlayerEntity player) {
         if(isMapped(player)) {
-            return data.get(player.getName().asString()).getFirst();
+            return data.get(player.getName().asString()).getSwapState();
         } else {
             addDefaultPlayer(player);
-            return ElytraSwap.config.noModPlayersDefaultState.getState();
+            return ElytraSwap.CONFIG.noModPlayersDefaultState.getState();
+        }
+    }
+
+    private static class PlayerEntry {
+        private final Tristate hasTrinkets;
+        private boolean swapState;
+
+        public PlayerEntry(Tristate hasTrinkets, boolean swapState) {
+            this.hasTrinkets = hasTrinkets;
+            this.swapState = swapState;
+        }
+
+        public Tristate getHasTrinkets() {
+            return hasTrinkets;
+        }
+
+        public boolean getSwapState() {
+            return swapState;
+        }
+
+        public void setSwapState(boolean swapState) {
+            this.swapState = swapState;
         }
     }
 
@@ -93,32 +115,6 @@ public class ServerSwapStateHandler {
 
         public static Tristate get(boolean val) {
             return val ? TRUE : FALSE;
-        }
-    }
-
-    private static class Pair <T, U> {
-        private T first;
-        private U second;
-
-        public Pair(T first, U second) {
-            this.first = first;
-            this.second = second;
-        }
-
-        public U getSecond() {
-            return second;
-        }
-
-        public void setSecond(U second) {
-            this.second = second;
-        }
-
-        public T getFirst() {
-            return first;
-        }
-
-        public void setFirst(T first) {
-            this.first = first;
         }
     }
 }

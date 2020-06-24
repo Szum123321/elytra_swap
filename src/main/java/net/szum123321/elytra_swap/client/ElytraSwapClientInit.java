@@ -20,14 +20,13 @@ package net.szum123321.elytra_swap.client;
 
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.keybinding.FabricKeyBinding;
-import net.fabricmc.fabric.api.client.keybinding.KeyBindingRegistry;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.event.client.ClientTickCallback;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
+import net.minecraft.client.options.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.text.LiteralText;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.PacketByteBuf;
 import net.szum123321.elytra_swap.ElytraSwap;
 import org.lwjgl.glfw.GLFW;
 
@@ -37,7 +36,7 @@ import org.lwjgl.glfw.GLFW;
 public class ElytraSwapClientInit implements ClientModInitializer {
 	public static ClientSwapStateHandler swapStateHandler;
 
-	private static FabricKeyBinding enableSwap;
+	private static KeyBinding enableSwap;
 
 	public static boolean serverHasMod = false;
 	private boolean lastState = false;
@@ -52,16 +51,17 @@ public class ElytraSwapClientInit implements ClientModInitializer {
 	}
 
 	private void registerKeyBind() {
-		KeyBindingRegistry.INSTANCE.addCategory("Elytra Swap");
+		//KeyBindingRegistry.INSTANCE.addCategory("Elytra Swap");
 
-		enableSwap = FabricKeyBinding.Builder.create(
-				new Identifier(ElytraSwap.MOD_ID, "swap"),
+		enableSwap = new KeyBinding(
+				"key.elytra_swap.swap",
 				InputUtil.Type.KEYSYM,
 				GLFW.GLFW_KEY_P,
-				"Elytra Swap"
-		).build();
+				"category.elytra_swap.swap"
+		);
 
-		KeyBindingRegistry.INSTANCE.register(enableSwap);
+		KeyBindingHelper.registerKeyBinding(enableSwap);
+		//KeyBindingRegistry.INSTANCE.register(enableSwap);
 
 		ClientTickCallback.EVENT.register(e -> {
 			if (enableSwap.isPressed() && serverHasMod) {
@@ -70,7 +70,7 @@ public class ElytraSwapClientInit implements ClientModInitializer {
 					lastState = true;
 
 					if (e.player != null)
-						e.player.sendMessage(new LiteralText("Elytra Swap in now: " + (swapStateHandler.get() ? "Enabled" : "Disabled")));
+						e.player.sendMessage(new LiteralText("Elytra Swap in now: " + (swapStateHandler.get() ? "Enabled" : "Disabled")), false);
 
 					PacketByteBuf passedData = new PacketByteBuf(Unpooled.buffer());
 					passedData.writeBoolean(swapStateHandler.get());

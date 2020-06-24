@@ -16,12 +16,12 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-package net.szum123321.elytra_swap.core;
+package net.szum123321.elytra_swap;
 
 import blue.endless.jankson.Comment;
 import io.github.cottonmc.cotton.config.annotations.ConfigFile;
-import net.szum123321.elytra_swap.ElytraSwap;
 
+@SuppressWarnings("CanBeFinal")
 @ConfigFile(name = ElytraSwap.MOD_ID)
 public class ConfigHandler {
 	@Comment(value = "\nChanges how server treats players without mod installed\n" +
@@ -48,7 +48,7 @@ public class ConfigHandler {
 					"Default: ENABLE\n")
 	public EnableDisableEnum noModPlayersDefaultState = EnableDisableEnum.ENABLE;
 
-	enum EnableDisableEnum {
+	public enum EnableDisableEnum {
 		ENABLE(true),
 		DISABLE(false);
 

@@ -16,7 +16,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-package net.szum123321.elytra_swap.core;
+package net.szum123321.elytra_swap.inventory;
 
 import net.minecraft.item.Items;
 

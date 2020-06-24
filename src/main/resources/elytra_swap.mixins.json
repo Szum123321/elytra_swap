@@ -3,8 +3,9 @@
 	"package": "net.szum123321.elytra_swap.mixin",
 	"compatibilityLevel": "JAVA_8",
 	"mixins": [
-		"PlayerFallCapture",
-		"TakeoffHandler"
+		"EntitySetFlagInvoker",
+		"ServerPlayerEntityMixin",
+		"FireworkItemMixin"
 	],
 	"client": [
 		"ClientServerJoin"

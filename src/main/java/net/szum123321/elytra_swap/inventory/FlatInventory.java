@@ -16,7 +16,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-package net.szum123321.elytra_swap.core;
+package net.szum123321.elytra_swap.inventory;
 
 import dev.emi.trinkets.api.Slots;
 import dev.emi.trinkets.api.TrinketSlots;
@@ -30,8 +30,9 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.util.DefaultedList;
+import net.minecraft.util.collection.DefaultedList;
 import net.szum123321.elytra_swap.ElytraSwap;
+import net.szum123321.elytra_swap.handlers.ServerSwapStateHandler;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,17 +54,17 @@ public class FlatInventory {
 	public FlatInventory(PlayerEntity player) {
 		this.player = player;
 		this.trinketsSupport = FabricLoader.getInstance().isModLoaded("trinkets") &&
-								!(ElytraSwap.serverSwapStateHandler.getTrinketsSupport(player) == ServerSwapStateHandler.Tristate.FALSE);
+								(ElytraSwap.serverSwapStateHandler.getTrinketsSupport(player) == ServerSwapStateHandler.Tristate.TRUE);
 
-		for (int i = 0; i < player.inventory.getInvSize(); i++) {
+		for (int i = 0; i < player.inventory.size(); i++) {
 			if (i == 38) //Chestplate slot
 				specialSlots.put(SpecialSlots.CHESTPLATE, slots.size());
 
 			slots.add(new Slot(InventoryType.NORMAL, i));
 
-			if (player.inventory.getInvStack(i).getItem() instanceof BlockItem &&
-					((BlockItem) player.inventory.getInvStack(i).getItem()).getBlock() instanceof ShulkerBoxBlock &&
-					ElytraSwap.config.lookThroughShulkers) {
+			if (player.inventory.getStack(i).getItem() instanceof BlockItem &&
+					((BlockItem) player.inventory.getStack(i).getItem()).getBlock() instanceof ShulkerBoxBlock &&
+					ElytraSwap.CONFIG.lookThroughShulkers) {
 				for (int j = 0; j < 27; j++)
 					slots.add(new Slot(InventoryType.NORMAL, i, j));
 			}
@@ -78,9 +79,9 @@ public class FlatInventory {
 
 				slots.add(new Slot(InventoryType.TRINKETS, i));
 
-				if (tInv.getInvStack(i).getItem() instanceof BlockItem &&
-						((BlockItem) tInv.getInvStack(i).getItem()).getBlock() instanceof ShulkerBoxBlock &&
-						ElytraSwap.config.lookThroughShulkers) {
+				if (tInv.getStack(i).getItem() instanceof BlockItem &&
+						((BlockItem) tInv.getStack(i).getItem()).getBlock() instanceof ShulkerBoxBlock &&
+						ElytraSwap.CONFIG.lookThroughShulkers) {
 					for (int j = 0; j < 27; j++)
 						slots.add(new Slot(InventoryType.TRINKETS, i, j));
 				}
@@ -103,9 +104,9 @@ public class FlatInventory {
 
 		if (slot.invType == InventoryType.NORMAL) { // standard inventory
 			if (slot.shulkerIndex == -1) {  // is not a shulker
-				player.inventory.setInvStack(slot.slotIndex, stack);
+				player.inventory.setStack(slot.slotIndex, stack);
 			} else {  // it is a shulker so get stack form it
-				ItemStack shulker = player.inventory.getInvStack(slot.slotIndex);
+				ItemStack shulker = player.inventory.getStack(slot.slotIndex);
 
 				if (shulker.getTag() != null) {
 					DefaultedList<ItemStack> shulkerInventory = DefaultedList.ofSize(27, ItemStack.EMPTY);
@@ -120,9 +121,9 @@ public class FlatInventory {
 			}
 		} else if (slot.invType == InventoryType.TRINKETS && trinketsSupport) { // trinkets inventory
 			if (slot.shulkerIndex == -1) {
-				TrinketsApi.getTrinketsInventory(player).setInvStack(slot.slotIndex, stack);
+				TrinketsApi.getTrinketsInventory(player).setStack(slot.slotIndex, stack);
 			} else {
-				ItemStack shulker = TrinketsApi.getTrinketsInventory(player).getInvStack(slot.slotIndex);
+				ItemStack shulker = TrinketsApi.getTrinketsInventory(player).getStack(slot.slotIndex);
 
 				if (shulker.getTag() != null) {
 					DefaultedList<ItemStack> shulkerInventory = DefaultedList.ofSize(27, ItemStack.EMPTY);
@@ -147,9 +148,9 @@ public class FlatInventory {
 
 		if (slot.invType == InventoryType.NORMAL) { // standard inventory
 			if (slot.shulkerIndex == -1) {  // is not a shulker
-				return player.inventory.getInvStack(slot.slotIndex);
+				return player.inventory.getStack(slot.slotIndex);
 			} else {  // it is a shulker so get the stack form it
-				ItemStack shulker = player.inventory.getInvStack(slot.slotIndex);
+				ItemStack shulker = player.inventory.getStack(slot.slotIndex);
 
 				if (shulker.getTag() != null) {
 					DefaultedList<ItemStack> shulkerInventory = DefaultedList.ofSize(27, ItemStack.EMPTY);
@@ -160,9 +161,9 @@ public class FlatInventory {
 			}
 		} else if (slot.invType == InventoryType.TRINKETS && trinketsSupport) { // trinkets inventory
 			if (slot.shulkerIndex == -1) {
-				return TrinketsApi.getTrinketsInventory(player).getInvStack(slot.slotIndex);
+				return TrinketsApi.getTrinketsInventory(player).getStack(slot.slotIndex);
 			} else {
-				ItemStack shulker = TrinketsApi.getTrinketsInventory(player).getInvStack(slot.slotIndex);
+				ItemStack shulker = TrinketsApi.getTrinketsInventory(player).getStack(slot.slotIndex);
 
 				if (shulker.getTag() != null) {
 					DefaultedList<ItemStack> shulkerInventory = DefaultedList.ofSize(27, ItemStack.EMPTY);
@@ -204,7 +205,8 @@ public class FlatInventory {
 	}
 
 	private enum SpecialSlots {
-		CAPE, CHESTPLATE
+		CAPE,
+		CHESTPLATE
 	}
 
 	private enum InventoryType {
@@ -212,7 +214,7 @@ public class FlatInventory {
 		TRINKETS
 	}
 
-	private class Slot {
+	private static class Slot {
 		public final InventoryType invType;  // 1 - normal, 2 - trinket
 		public final int shulkerIndex; // id of item in shulker
 		public final int slotIndex; // id of slot in given inventory

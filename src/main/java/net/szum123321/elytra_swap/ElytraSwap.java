@@ -24,8 +24,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.minecraft.util.Identifier;
 import net.szum123321.elytra_swap.command.SwapEnablementCommandRegister;
-import net.szum123321.elytra_swap.core.ConfigHandler;
-import net.szum123321.elytra_swap.core.ServerSwapStateHandler;
+import net.szum123321.elytra_swap.handlers.ServerSwapStateHandler;
 
 /*
     Main class. Mostly static variables and initialization stuff.
@@ -39,7 +38,7 @@ public class ElytraSwap implements ModInitializer {
     public static final Identifier SET_SWAP_STATE = new Identifier(MOD_ID, "set_state");
     public static final Identifier DUMMY_PACKAGE = new Identifier(MOD_ID, "dummy");
 
-    public static ConfigHandler config;
+    public static ConfigHandler CONFIG;
     public static final ModLogger LOGGER = new ModLogger(MOD_ID);
 
     public static ServerSwapStateHandler serverSwapStateHandler;
@@ -48,7 +47,7 @@ public class ElytraSwap implements ModInitializer {
     public void onInitialize() {
         LOGGER.info("Loading Elytra Swap by Szum123321");
 
-        config = ConfigManager.loadConfig(ConfigHandler.class);
+        CONFIG = ConfigManager.loadConfig(ConfigHandler.class);
 
         registerSwapToggle();
 
