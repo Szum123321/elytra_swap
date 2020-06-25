@@ -24,9 +24,8 @@ import net.minecraft.item.Items;
 	Small utility class for actually swapping elytra with chestplate and back.
 */
 
-public class InventoryController {
-	public static void replaceElytraWithChestPlate(FlatInventory inv) {
-
+public class InventoryHelper {
+	public static void replaceElytraWithChestplate(FlatInventory inv) {
 		if (!inv.getItemStack(inv.getChestplateSlotId()).getItem().toString().toLowerCase().contains("chestplate")) {
 			int chestplateSlot;
 
@@ -56,9 +55,5 @@ public class InventoryController {
 
 			inv.switchItemStacks(elytraSlot, inv.getElytraSlotId());
 		}
-	}
-
-	public static boolean doesPlayerHaveElytra(FlatInventory inv) {
-		return inv.hasElytra();
 	}
 }

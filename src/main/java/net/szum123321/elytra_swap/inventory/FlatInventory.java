@@ -27,8 +27,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.collection.DefaultedList;
 import net.szum123321.elytra_swap.ElytraSwap;
@@ -103,7 +103,7 @@ public class FlatInventory {
 		Slot slot = slots.get(index);
 
 		if (slot.invType == InventoryType.NORMAL) { // standard inventory
-			if (slot.shulkerIndex == -1) {  // is not a shulker
+			if (slot.containerIndex == -1) {  // is not a shulker
 				player.inventory.setStack(slot.slotIndex, stack);
 			} else {  // it is a shulker so get stack form it
 				ItemStack shulker = player.inventory.getStack(slot.slotIndex);
@@ -112,7 +112,7 @@ public class FlatInventory {
 					DefaultedList<ItemStack> shulkerInventory = DefaultedList.ofSize(27, ItemStack.EMPTY);
 					Inventories.fromTag(shulker.getTag().getCompound("BlockEntityTag"), shulkerInventory);
 
-					shulkerInventory.set(slot.shulkerIndex, stack);
+					shulkerInventory.set(slot.containerIndex, stack);
 
 					CompoundTag tag = new CompoundTag();
 					Inventories.toTag(tag, shulkerInventory, false);
@@ -120,7 +120,7 @@ public class FlatInventory {
 				}
 			}
 		} else if (slot.invType == InventoryType.TRINKETS && trinketsSupport) { // trinkets inventory
-			if (slot.shulkerIndex == -1) {
+			if (slot.containerIndex == -1) {
 				TrinketsApi.getTrinketsInventory(player).setStack(slot.slotIndex, stack);
 			} else {
 				ItemStack shulker = TrinketsApi.getTrinketsInventory(player).getStack(slot.slotIndex);
@@ -129,7 +129,7 @@ public class FlatInventory {
 					DefaultedList<ItemStack> shulkerInventory = DefaultedList.ofSize(27, ItemStack.EMPTY);
 					Inventories.fromTag(shulker.getTag().getCompound("BlockEntityTag"), shulkerInventory);
 
-					shulkerInventory.set(slot.shulkerIndex, stack);
+					shulkerInventory.set(slot.containerIndex, stack);
 
 					CompoundTag tag = new CompoundTag();
 					Inventories.toTag(tag, shulkerInventory, false);
@@ -147,7 +147,7 @@ public class FlatInventory {
 		Slot slot = slots.get(index);
 
 		if (slot.invType == InventoryType.NORMAL) { // standard inventory
-			if (slot.shulkerIndex == -1) {  // is not a shulker
+			if (slot.containerIndex == -1) {  // is not a shulker
 				return player.inventory.getStack(slot.slotIndex);
 			} else {  // it is a shulker so get the stack form it
 				ItemStack shulker = player.inventory.getStack(slot.slotIndex);
@@ -156,11 +156,11 @@ public class FlatInventory {
 					DefaultedList<ItemStack> shulkerInventory = DefaultedList.ofSize(27, ItemStack.EMPTY);
 					Inventories.fromTag(shulker.getTag().getCompound("BlockEntityTag"), shulkerInventory);
 
-					return shulkerInventory.get(slot.shulkerIndex);
+					return shulkerInventory.get(slot.containerIndex);
 				}
 			}
 		} else if (slot.invType == InventoryType.TRINKETS && trinketsSupport) { // trinkets inventory
-			if (slot.shulkerIndex == -1) {
+			if (slot.containerIndex == -1) {
 				return TrinketsApi.getTrinketsInventory(player).getStack(slot.slotIndex);
 			} else {
 				ItemStack shulker = TrinketsApi.getTrinketsInventory(player).getStack(slot.slotIndex);
@@ -169,7 +169,7 @@ public class FlatInventory {
 					DefaultedList<ItemStack> shulkerInventory = DefaultedList.ofSize(27, ItemStack.EMPTY);
 					Inventories.fromTag(shulker.getTag().getCompound("BlockEntityTag"), shulkerInventory);
 
-					return shulkerInventory.get(slot.shulkerIndex);
+					return shulkerInventory.get(slot.containerIndex);
 				}
 			}
 		}
@@ -184,9 +184,9 @@ public class FlatInventory {
 		setItemStack(b, temp);
 	}
 
-	public boolean hasElytra() {
+	public boolean hasItem(Item item) {
 		for (int i = 0; i < slots.size(); i++) {
-			if (getItemStack(i).getItem() == Items.ELYTRA)
+			if (getItemStack(i).getItem() == item)
 				return true;
 		}
 
@@ -216,18 +216,18 @@ public class FlatInventory {
 
 	private static class Slot {
 		public final InventoryType invType;  // 1 - normal, 2 - trinket
-		public final int shulkerIndex; // id of item in shulker
+		public final int containerIndex; // id of item in shulker
 		public final int slotIndex; // id of slot in given inventory
 
-		public Slot(InventoryType invType, int slotIndex, int shulkerIndex) {
+		public Slot(InventoryType invType, int slotIndex, int containerIndex) {
 			this.invType = invType;
-			this.shulkerIndex = shulkerIndex;
+			this.containerIndex = containerIndex;
 			this.slotIndex = slotIndex;
 		}
 
 		public Slot(InventoryType invType, int slotIndex) {
 			this.invType = invType;
-			this.shulkerIndex = -1;
+			this.containerIndex = -1;
 			this.slotIndex = slotIndex;
 		}
 	}

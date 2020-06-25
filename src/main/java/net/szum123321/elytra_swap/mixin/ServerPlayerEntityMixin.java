@@ -18,10 +18,11 @@
 
 package net.szum123321.elytra_swap.mixin;
 
+import com.mojang.authlib.GameProfile;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.szum123321.elytra_swap.ElytraSwap;
 import net.szum123321.elytra_swap.handlers.PlayerFallHandler;
@@ -31,9 +32,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ServerPlayerEntity.class)
-public abstract class ServerPlayerEntityMixin extends LivingEntity {
-	protected ServerPlayerEntityMixin(EntityType<? extends LivingEntity> type, World world) {
-		super(type, world);
+public abstract class ServerPlayerEntityMixin extends PlayerEntity {
+	public ServerPlayerEntityMixin(World world, BlockPos blockPos, GameProfile gameProfile) {
+		super(world, blockPos, gameProfile);
 	}
 
 	@Inject(method = "handleFall", at = @At("RETURN"))  //No more nasty overrides!
@@ -44,7 +45,9 @@ public abstract class ServerPlayerEntityMixin extends LivingEntity {
 				(ServerSidePacketRegistry.INSTANCE.canPlayerReceive(serverPlayerEntity, ElytraSwap.DUMMY_PACKAGE) ||
 						ElytraSwap.CONFIG.noModPlayersHandlingMethod > 0)) {
 
-			PlayerFallHandler.handleFalling(serverPlayerEntity, heightDifference);
+			ElytraSwap.LOGGER.debug("On ground: %s, climbing: %s, is touching water: %s", onGround, isClimbing(), isTouchingWater());
+
+			PlayerFallHandler.handleFalling(serverPlayerEntity, heightDifference, onGround);
 		}
 	}
 }

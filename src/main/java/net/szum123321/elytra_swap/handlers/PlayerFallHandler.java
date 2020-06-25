@@ -19,29 +19,28 @@
 package net.szum123321.elytra_swap.handlers;
 
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.item.Items;
 import net.minecraft.util.math.BlockPos;
 import net.szum123321.elytra_swap.inventory.FlatInventory;
-import net.szum123321.elytra_swap.inventory.InventoryController;
+import net.szum123321.elytra_swap.inventory.InventoryHelper;
 import net.szum123321.elytra_swap.mixin.EntitySetFlagInvoker;
 
 /*
 	This class takes care of checking if we should swap elytra or not.
 */
 public class PlayerFallHandler {
-	public static void handleFalling(ServerPlayerEntity playerEntity, double heightDifference) {
-		FlatInventory flatInventory = new FlatInventory(playerEntity);
+	public static void handleFalling(PlayerEntity player, double heightDifference, boolean onGround) {
+		FlatInventory flatInventory = new FlatInventory(player);
 
-		if (InventoryController.doesPlayerHaveElytra(flatInventory)) {  // this line checks if player has elytra
-			if (!playerEntity.isOnGround() && !playerEntity.isClimbing() && !playerEntity.isTouchingWater()) {  //while this line makes sure that player is in the air, is not climbing and is not swimming
-				if (heightDifference < 0 && getFallHeight(playerEntity) > 5) { // and here we check i player is falling down and there are at least 5 blocks of empty space below him
-					InventoryController.replaceChestPlateWithElytra(flatInventory);
-					((EntitySetFlagInvoker)playerEntity).invokeSetFlag(7, true);    // thanks to this line you do not have to press space in order to start gliding
+		if (flatInventory.hasItem(Items.ELYTRA)) {  // this line checks if player has elytra
+			if (!onGround && !player.isClimbing() && !player.isTouchingWater()) {  //while this line makes sure that player is in the air, is not climbing and is not swimming
+				if (heightDifference < 0 && getFallHeight(player) > 5) { // and here we check i player is falling down and there are at least 5 blocks of empty space below him
+					InventoryHelper.replaceChestPlateWithElytra(flatInventory);
+					((EntitySetFlagInvoker)player).invokeSetFlag(7, true);    // thanks to this line you do not have to press space in order to start gliding
 				}
 			} else {
-				InventoryController.replaceElytraWithChestPlate(flatInventory);
-
-				((EntitySetFlagInvoker)playerEntity).invokeSetFlag(7, false);
+				InventoryHelper.replaceElytraWithChestplate(flatInventory);
+				((EntitySetFlagInvoker)player).invokeSetFlag(7, false);
 			}
 		}
 	}

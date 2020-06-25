@@ -23,13 +23,13 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.FireworkItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import net.szum123321.elytra_swap.ElytraSwap;
 import net.szum123321.elytra_swap.inventory.FlatInventory;
-import net.szum123321.elytra_swap.inventory.InventoryController;
 import net.szum123321.elytra_swap.handlers.TakeoffHandler;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -50,7 +50,7 @@ public abstract class FireworkItemMixin extends Item {
 			TakeoffHandler.checkSpaceOverPlayer(player, ElytraSwap.CONFIG.requiredHeightAbovePlayer) &&
 			ElytraSwap.serverSwapStateHandler.getSwapState(player) &&
 			(ServerSidePacketRegistry.INSTANCE.canPlayerReceive(player, ElytraSwap.DUMMY_PACKAGE) || ElytraSwap.CONFIG.noModPlayersHandlingMethod == 1) &&
-			InventoryController.doesPlayerHaveElytra(new FlatInventory(player))) {
+			new FlatInventory(player).hasItem(Items.ELYTRA)) {
 
 			TakeoffHandler.sendUpdate(world, player, hand);
 		}
