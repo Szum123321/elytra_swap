@@ -33,7 +33,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ClientPlayNetworkHandler.class)
 public class ClientServerJoin {
-
     /*
         This method get called every time player joins a server in order to find out if server
         has Elytra Swap installed, and if so, to send packet informing if player has Elytra Swap enabled

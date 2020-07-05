@@ -54,8 +54,8 @@ public class ClientSwapStateHandler {
             state = (reader.hasNextBoolean() ? reader.nextBoolean() : true);
 
             reader.close();
-        } catch (Exception e) {
-            ElytraSwap.LOGGER.error("Error while loading datafile: %s", e.toString());
+        } catch (IOException e) {
+            ElytraSwap.LOGGER.error("Error while loading datafile!", e);
             state = true;
         }
     }
@@ -74,8 +74,8 @@ public class ClientSwapStateHandler {
             writer.write(state ? "true" : "false");
 
             writer.close();
-        } catch (Exception e) {
-            ElytraSwap.LOGGER.error("Error while saving datafile: %s", e.toString());
+        } catch (IOException e) {
+            ElytraSwap.LOGGER.error("Error while saving datafile!", e);
             state = true;
         }
     }

@@ -18,42 +18,118 @@
 
 package net.szum123321.elytra_swap.inventory;
 
+import dev.emi.trinkets.api.TrinketSlots;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.item.ArmorItem;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.nbt.ByteTag;
+import net.szum123321.elytra_swap.data.MutablePair;
+import net.szum123321.elytra_swap.enchantment.ModEnchantments;
 
 /*
-	Small utility class for actually swapping elytra with chestplate and back.
+	Utility class for actually swapping elytra with chestplate and back.
 */
-
 public class InventoryHelper {
-	public static void replaceElytraWithChestplate(FlatInventory inv) {
-		if (!inv.getItemStack(inv.getChestplateSlotId()).getItem().toString().toLowerCase().contains("chestplate")) {
-			int chestplateSlot;
+	private static final String swapTag = "swapped_item";
 
-			for(chestplateSlot = 0; chestplateSlot < inv.getSize(); chestplateSlot++) {
-				if (inv.getItemStack(chestplateSlot).getItem().toString().toLowerCase().contains("chestplate"))
-					break;
+	public static void replaceElytraWithChestplate(FlatInventory inv) {
+		if(inv.getItemStack(inv.getElytraSlotId()).getItem() == Items.ELYTRA) {
+			int var1 = -1;
+
+			if(!inv.hasTrinkets()) { // isVanilla => ElytraSlotId == ChestplateSlotId
+				 var1 = getBestChestplate(inv);
+			} else {
+				var1 = getBestTrinket(inv);
 			}
 
-			if (chestplateSlot >= inv.getSize() - 1)
-				return;
-
-			inv.switchItemStacks(chestplateSlot, inv.getChestplateSlotId());
+			if(var1 >= 0 && var1 != inv.getElytraSlotId()) {
+				inv.putSubTag(inv.getElytraSlotId(), swapTag, ByteTag.ONE);
+				inv.removeSubTag(var1, swapTag);
+				inv.switchItemStacks(var1, inv.getElytraSlotId());
+			}
 		}
 	}
 
-	public static void replaceChestPlateWithElytra(FlatInventory inv) {
+	public static void replaceChestplateWithElytra(FlatInventory inv) {
 		if (inv.getItemStack(inv.getElytraSlotId()).getItem() != Items.ELYTRA) {
-			int elytraSlot;
+			int var1 = getBestElytra(inv);
 
-			for (elytraSlot = 0; elytraSlot < inv.getSize(); elytraSlot++) {
-				if (inv.getItemStack(elytraSlot).getItem() == Items.ELYTRA)
-					break;
+			if(var1 >= 0 && var1 != inv.getElytraSlotId()) {
+				inv.removeSubTag(var1, swapTag);
+				inv.putSubTag(inv.getElytraSlotId(), swapTag, ByteTag.ONE);
+				inv.switchItemStacks(var1, inv.getElytraSlotId());
 			}
-
-			if (elytraSlot >= inv.getSize() - 1)
-				return;
-
-			inv.switchItemStacks(elytraSlot, inv.getElytraSlotId());
 		}
+	}
+
+	private static int getBestChestplate(FlatInventory inv) {
+		MutablePair<Integer, Integer> result = new MutablePair<>(-1, -1);
+
+		for(int i = 0; i < inv.getSize(); i++) {
+			if(inv.getItemStack(i).getItem() instanceof ArmorItem) {
+				ArmorItem armorItem = (ArmorItem)inv.getItemStack(i).getItem();
+
+				if(armorItem.getSlotType() == EquipmentSlot.CHEST) {
+					int var1 = getPriority(inv.getItemStack(i));
+
+					if(var1 > result.getLast()) {
+						result.setFirst(i);
+						result.setLast(var1);
+					}
+				}
+			}
+		}
+
+		return result.getFirst();
+	}
+
+	private static int getBestElytra(FlatInventory inv) {
+		MutablePair<Integer, Integer> result = new MutablePair<>(-1, -1);
+
+		for(int i = 0; i < inv.getSize(); i++) {
+			if(inv.getItemStack(i).getItem() == Items.ELYTRA) {
+				int var1 = getPriority(inv.getItemStack(i));
+
+				if(var1 > result.getLast()) {
+					result.setFirst(i);
+					result.setLast(var1);
+				}
+			}
+		}
+
+		return result.getFirst();
+	}
+
+	private static int getBestTrinket(FlatInventory inv) {
+		final TrinketSlots.Slot trinketSlot = TrinketSlots.getSlotFromName("chest", "cape");
+		MutablePair<Integer, Integer> result = new MutablePair<>(-1, -1);
+
+		for(int i = 0; i < inv.getSize(); i++) {
+			if(inv.getItemStack(i).getItem() != Items.ELYTRA &&
+					trinketSlot.canEquip.apply(trinketSlot, inv.getItemStack(i))) {
+
+				int var1 = getPriority(inv.getItemStack(i));
+
+				if(var1 > result.getFirst()) {
+					result.setFirst(i);
+					result.setLast(var1);
+				}
+			}
+		}
+
+		return result.getFirst();
+	}
+
+	private static int getPriority(ItemStack stack) {
+		int p = 0;
+
+		if (stack.getTag() != null && stack.getTag().getByte("swapped_item") == 1)
+			p = 1;
+
+		p = Math.max(p, EnchantmentHelper.getLevel(ModEnchantments.SWAPPINESS, stack));
+
+		return p;
 	}
 }

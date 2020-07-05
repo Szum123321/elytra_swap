@@ -19,12 +19,13 @@
 package net.szum123321.elytra_swap;
 
 import io.github.cottonmc.cotton.config.ConfigManager;
-import io.github.cottonmc.cotton.logging.ModLogger;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.minecraft.util.Identifier;
 import net.szum123321.elytra_swap.command.SwapEnablementCommandRegister;
 import net.szum123321.elytra_swap.handlers.ServerSwapStateHandler;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /*
     Main class. Mostly static variables and initialization stuff.
@@ -39,7 +40,7 @@ public class ElytraSwap implements ModInitializer {
     public static final Identifier DUMMY_PACKAGE = new Identifier(MOD_ID, "dummy");
 
     public static ConfigHandler CONFIG;
-    public static final ModLogger LOGGER = new ModLogger(MOD_ID);
+    public static final Logger LOGGER = LogManager.getFormatterLogger("Elytra Swap");
 
     public static ServerSwapStateHandler serverSwapStateHandler;
 

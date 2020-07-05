@@ -45,7 +45,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
 				(ServerSidePacketRegistry.INSTANCE.canPlayerReceive(serverPlayerEntity, ElytraSwap.DUMMY_PACKAGE) ||
 						ElytraSwap.CONFIG.noModPlayersHandlingMethod > 0)) {
 
-			ElytraSwap.LOGGER.debug("On ground: %s, climbing: %s, is touching water: %s", onGround, isClimbing(), isTouchingWater());
+			//ElytraSwap.LOGGER.debug("On ground: %s, climbing: %s, is touching water: %s", onGround, isClimbing(), isTouchingWater());
 
 			PlayerFallHandler.handleFalling(serverPlayerEntity, heightDifference, onGround);
 		}

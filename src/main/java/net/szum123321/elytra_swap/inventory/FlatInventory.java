@@ -30,7 +30,10 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.registry.Registry;
 import net.szum123321.elytra_swap.ElytraSwap;
 import net.szum123321.elytra_swap.handlers.ServerSwapStateHandler;
 
@@ -44,7 +47,6 @@ import java.util.Map;
 	Basically a inventory abstraction layer. :)
 	Compatibility with other mods can be easily added
 */
-
 public class FlatInventory {
 	private final boolean trinketsSupport;
 	private final List<Slot> slots = new ArrayList<>();
@@ -60,13 +62,13 @@ public class FlatInventory {
 			if (i == 38) //Chestplate slot
 				specialSlots.put(SpecialSlots.CHESTPLATE, slots.size());
 
-			slots.add(new Slot(InventoryType.NORMAL, i));
+			slots.add(new Slot(InventoryType.VANILLA, i));
 
 			if (player.inventory.getStack(i).getItem() instanceof BlockItem &&
 					((BlockItem) player.inventory.getStack(i).getItem()).getBlock() instanceof ShulkerBoxBlock &&
 					ElytraSwap.CONFIG.lookThroughShulkers) {
 				for (int j = 0; j < 27; j++)
-					slots.add(new Slot(InventoryType.NORMAL, i, j));
+					slots.add(new Slot(InventoryType.VANILLA, i, j));
 			}
 		}
 
@@ -93,8 +95,6 @@ public class FlatInventory {
 		return slots.size();
 	}
 
-	public PlayerEntity getPlayer() { return player; }
-
 	public void setItemStack(int index, ItemStack stack) throws IndexOutOfBoundsException {
 		if (index >= slots.size() || index < 0)
 			throw new IndexOutOfBoundsException("Called setItemStack with index = " + index +
@@ -102,7 +102,7 @@ public class FlatInventory {
 
 		Slot slot = slots.get(index);
 
-		if (slot.invType == InventoryType.NORMAL) { // standard inventory
+		if (slot.invType == InventoryType.VANILLA) { // standard inventory
 			if (slot.containerIndex == -1) {  // is not a shulker
 				player.inventory.setStack(slot.slotIndex, stack);
 			} else {  // it is a shulker so get stack form it
@@ -146,7 +146,7 @@ public class FlatInventory {
 
 		Slot slot = slots.get(index);
 
-		if (slot.invType == InventoryType.NORMAL) { // standard inventory
+		if (slot.invType == InventoryType.VANILLA) { // standard inventory
 			if (slot.containerIndex == -1) {  // is not a shulker
 				return player.inventory.getStack(slot.slotIndex);
 			} else {  // it is a shulker so get the stack form it
@@ -177,11 +177,27 @@ public class FlatInventory {
 		return ItemStack.EMPTY; // something went horribly wrong!
 	}
 
-	public void switchItemStacks(int a, int b) {
-		ItemStack temp = getItemStack(a).copy();
+	public void removeSubTag(int index, String tagName) { //We have to do so because item may come from shulker box
+		ItemStack stack = getItemStack(index);
+		stack.removeSubTag(tagName);
+		setItemStack(index, stack);
+	}
 
-		setItemStack(a, getItemStack(b));
-		setItemStack(b, temp);
+	public void putSubTag(int index, String tagName, Tag tag) {
+		ItemStack stack = getItemStack(index);
+		stack.putSubTag(tagName, tag);
+		setItemStack(index, stack);
+	}
+
+	public void switchItemStacks(int indexA, int indexB) {
+		ItemStack temp = getItemStack(indexA).copy();
+
+		setItemStack(indexA, getItemStack(indexB));
+		setItemStack(indexB, temp);
+	}
+
+	public PlayerEntity getPlayer() {
+		return player;
 	}
 
 	public boolean hasItem(Item item) {
@@ -204,18 +220,30 @@ public class FlatInventory {
 		return specialSlots.get(SpecialSlots.CHESTPLATE);
 	}
 
+	public boolean isVanillaSlot(int index) {
+		if (index >= slots.size() || index < 0)
+			throw new IndexOutOfBoundsException("Called getItemStack with index = " + index +
+					", which exceeds allowed bounds of: 0 to: " + (slots.size() - 1));
+
+		return slots.get(index).invType == InventoryType.VANILLA;
+	}
+
+	public boolean hasTrinkets() {
+		return trinketsSupport;
+	}
+
 	private enum SpecialSlots {
 		CAPE,
 		CHESTPLATE
 	}
 
 	private enum InventoryType {
-		NORMAL,
+		VANILLA,
 		TRINKETS
 	}
 
 	private static class Slot {
-		public final InventoryType invType;  // 1 - normal, 2 - trinket
+		public final InventoryType invType;
 		public final int containerIndex; // id of item in shulker
 		public final int slotIndex; // id of slot in given inventory
 
