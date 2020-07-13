@@ -29,6 +29,11 @@ import net.minecraft.text.TranslatableText;
 
 import java.util.Objects;
 
+/*
+    This class was inspired by https://github.com/QsPD-Minecraft/Fabric-Server-Enchantments/blob/master/src/main/java/io/github/qspdmc/util/LoreUtil.java
+    written by Devan-Kerman and licensed under LGPL-3.
+*/
+
 public class LoreHelper {
     private final static String loreItemName = "Swap Priority: ";
 
