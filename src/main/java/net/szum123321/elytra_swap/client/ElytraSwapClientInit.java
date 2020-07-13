@@ -20,8 +20,8 @@ package net.szum123321.elytra_swap.client;
 
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-import net.fabricmc.fabric.api.event.client.ClientTickCallback;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.minecraft.client.options.KeyBinding;
 import net.minecraft.client.util.InputUtil;
@@ -51,8 +51,6 @@ public class ElytraSwapClientInit implements ClientModInitializer {
 	}
 
 	private void registerKeyBind() {
-		//KeyBindingRegistry.INSTANCE.addCategory("Elytra Swap");
-
 		enableSwap = new KeyBinding(
 				"key.elytra_swap.swap",
 				InputUtil.Type.KEYSYM,
@@ -61,16 +59,15 @@ public class ElytraSwapClientInit implements ClientModInitializer {
 		);
 
 		KeyBindingHelper.registerKeyBinding(enableSwap);
-		//KeyBindingRegistry.INSTANCE.register(enableSwap);
 
-		ClientTickCallback.EVENT.register(e -> {
+		ClientTickEvents.END_CLIENT_TICK.register(event -> {
 			if (enableSwap.isPressed() && serverHasMod) {
 				if (!lastState) {
 					swapStateHandler.set(!swapStateHandler.get());
 					lastState = true;
 
-					if (e.player != null)
-						e.player.sendMessage(new LiteralText("Elytra Swap in now: " + (swapStateHandler.get() ? "Enabled" : "Disabled")), false);
+					if (event.player != null)
+						event.player.sendMessage(new LiteralText("Elytra Swap in now: " + (swapStateHandler.get() ? "Enabled" : "Disabled")), false);
 
 					PacketByteBuf passedData = new PacketByteBuf(Unpooled.buffer());
 					passedData.writeBoolean(swapStateHandler.get());

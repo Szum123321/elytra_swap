@@ -24,7 +24,7 @@ import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.ByteTag;
-import net.szum123321.elytra_swap.LoreHelper;
+import net.szum123321.elytra_swap.command.LoreHelper;
 import net.szum123321.elytra_swap.data.MutablePair;
 
 /*

@@ -16,7 +16,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-package net.szum123321.elytra_swap;
+package net.szum123321.elytra_swap.command;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
@@ -30,7 +30,7 @@ import net.minecraft.text.TranslatableText;
 import java.util.Objects;
 
 public class LoreHelper {
-    private final static String loreItemName = "Swap Priority";
+    private final static String loreItemName = "Swap Priority: ";
 
     public static void apply(ItemStack stack, int level) {
         CompoundTag display = stack.getOrCreateSubTag("display");
@@ -46,7 +46,7 @@ public class LoreHelper {
         });
 
         if(level > 0) {
-            lore.add(0, StringTag.of(Text.Serializer.toJson(new LiteralText(loreItemName + " ").append(new TranslatableText("enchantment.level." + level)))));
+            lore.add(0, StringTag.of(Text.Serializer.toJson(new LiteralText(loreItemName).append(new TranslatableText("enchantment.level." + level)))));
         }
 
         display.put("Lore", lore);
@@ -64,7 +64,6 @@ public class LoreHelper {
                 .map(Text::asString)
                 .filter(s -> s.startsWith(loreItemName))
                 .map(s -> s.split(loreItemName)[1])
-                //.peek(System.out::println)
                 .map(Integer::parseInt)
                 .findFirst()
                 .orElse(-1);

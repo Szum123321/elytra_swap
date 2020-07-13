@@ -25,27 +25,31 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import dev.emi.trinkets.api.Trinket;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
+import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ElytraItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
+import net.minecraft.util.Formatting;
 import net.szum123321.elytra_swap.ElytraSwap;
-import net.szum123321.elytra_swap.LoreHelper;
 
+
+//TODO: add help, make "value" always show up.
 public class SwapEnablementCommandRegister {
 	public static void register() {
 		CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> dispatcher.register(
 				(LiteralArgumentBuilder)(CommandManager.literal("swap")
 				.then(CommandManager.literal("apply").then(
 						(RequiredArgumentBuilder)CommandManager.argument("value", IntegerArgumentType.integer(0, 10))
-								.executes(SwapEnablementCommandRegister::executeApply)
-				))
-				).then(CommandManager.literal("toggle")
+								.executes(SwapEnablementCommandRegister::executeApply))
+						.executes(SwapEnablementCommandRegister::executeApplyHelp)
+				)).then(CommandManager.literal("toggle")
 						.then(CommandManager.literal("enable").executes(ctx -> executeToggle(ctx, true)))
 						.then(CommandManager.literal("disable").executes(ctx -> executeToggle(ctx, false)))
-				)
+						.executes(SwapEnablementCommandRegister::executeToggleHelp)
+				).executes(SwapEnablementCommandRegister::executeHelp)
 			)
 		);
 	}
@@ -60,17 +64,17 @@ public class SwapEnablementCommandRegister {
 	}
 
 	private static int executeApply(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
-		int a = IntegerArgumentType.getInteger(ctx, "value");
-		ServerPlayerEntity playerEntity = ctx.getSource().getPlayer();
+		int value = IntegerArgumentType.getInteger(ctx, "value");
 
-		ItemStack stack = playerEntity.getMainHandStack();
-
-		if(stack.isEmpty())
-			stack = playerEntity.getOffHandStack();
+		ItemStack stack = ctx.getSource().getPlayer().getMainHandStack();
 
 		if(!stack.isEmpty()) {
-			if(stack.getItem() instanceof Trinket || stack.getItem() instanceof ElytraItem) {
-				LoreHelper.apply(stack, a);
+			if(stack.getItem() instanceof ElytraItem ||
+					(stack.getItem() instanceof ArmorItem && ((ArmorItem)stack.getItem()).getSlotType() == EquipmentSlot.CHEST) ||
+					(ElytraSwap.hasTrinkets && stack.getItem() instanceof Trinket && ((Trinket)stack.getItem()).canWearInSlot("chest", "cape"))) {
+				LoreHelper.apply(stack, value);
+			} else {
+				ctx.getSource().sendFeedback(new LiteralText("Sorry, but you cannot set priority on this item!").formatted(Formatting.RED), false);
 			}
 		}
 
@@ -78,16 +82,21 @@ public class SwapEnablementCommandRegister {
 	}
 
 	private static int executeApplyHelp(CommandContext<ServerCommandSource> ctx) {
+		ctx.getSource().sendFeedback(new LiteralText("With this command you can set swap priority for an item in your hand."), false);
+		ctx.getSource().sendFeedback(new LiteralText("Values range from 0 (removes priority.), to 10 (max)"), false);
+
 		return 1;
 	}
 
 	private static int executeToggleHelp(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
-		//ctx.getSource().sendFeedback(new LiteralText("Available options are: true(enable), false(disable). Now Elytra Swap is: " + (ElytraSwap.serverSwapStateHandler.getSwapState(ctx.getSource().getPlayer()) ? "enabled" : "disabled")),false);
+		ctx.getSource().sendFeedback(new LiteralText("Available options are: enable, disable. Now Elytra Swap is: " + (ElytraSwap.serverSwapStateHandler.getSwapState(ctx.getSource().getPlayer()) ? "enabled" : "disabled")),false);
+
 		return 1;
 	}
 
 	private static int executeHelp(CommandContext<ServerCommandSource> ctx) {
-		//ctx.getSource().sendFeedback(new LiteralText("Available commands are: toggle, apply"), false);
+		ctx.getSource().sendFeedback(new LiteralText("Available commands are: toggle, apply"), false);
+
 		return 1;
 	}
 }

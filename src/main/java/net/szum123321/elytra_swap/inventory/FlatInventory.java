@@ -55,7 +55,7 @@ public class FlatInventory {
 
 	public FlatInventory(PlayerEntity player) {
 		this.player = player;
-		this.trinketsSupport = FabricLoader.getInstance().isModLoaded("trinkets") &&
+		this.trinketsSupport = ElytraSwap.hasTrinkets &&
 								(ElytraSwap.serverSwapStateHandler.getTrinketsSupport(player) == ServerSwapStateHandler.Tristate.TRUE);
 
 		for (int i = 0; i < player.inventory.size(); i++) {

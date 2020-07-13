@@ -21,6 +21,7 @@ package net.szum123321.elytra_swap;
 import io.github.cottonmc.cotton.config.ConfigManager;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.util.Identifier;
 import net.szum123321.elytra_swap.command.SwapEnablementCommandRegister;
 import net.szum123321.elytra_swap.handlers.ServerSwapStateHandler;
@@ -43,6 +44,7 @@ public class ElytraSwap implements ModInitializer {
     public static final Logger LOGGER = LogManager.getFormatterLogger("Elytra Swap");
 
     public static ServerSwapStateHandler serverSwapStateHandler;
+    public static boolean hasTrinkets;
 
     @Override
     public void onInitialize() {
@@ -55,6 +57,8 @@ public class ElytraSwap implements ModInitializer {
         SwapEnablementCommandRegister.register();
 
         serverSwapStateHandler = new ServerSwapStateHandler();
+
+        hasTrinkets = FabricLoader.getInstance().isModLoaded("trinkets");
     }
 
     private void registerSwapToggle() {
