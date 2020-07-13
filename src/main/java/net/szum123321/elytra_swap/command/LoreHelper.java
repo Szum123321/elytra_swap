@@ -40,7 +40,7 @@ public class LoreHelper {
             Text text = Text.Serializer.fromJson(tag.asString());
 
             if(text != null)
-                return text.asString().startsWith(loreItemName);
+                return text.getString().startsWith(loreItemName);
 
             return false;
         });
@@ -61,9 +61,12 @@ public class LoreHelper {
                 .map(Tag::asString)
                 .map(Text.Serializer::fromJson)
                 .filter(Objects::nonNull)
-                .map(Text::asString)
-                .filter(s -> s.startsWith(loreItemName))
-                .map(s -> s.split(loreItemName)[1])
+                .filter(text -> text.getString().startsWith(loreItemName))
+                .flatMap(text -> text.getSiblings().stream())
+                .filter(text -> text instanceof TranslatableText)
+                .map(text -> ((TranslatableText) text).getKey())
+                .filter(s -> s.startsWith("enchantment.level."))
+                .map(s -> s.split("enchantment.level.")[1])
                 .map(Integer::parseInt)
                 .findFirst()
                 .orElse(-1);

@@ -33,7 +33,7 @@ public class PlayerFallHandler {
 		FlatInventory flatInventory = new FlatInventory(player);
 
 		if (flatInventory.hasItem(Items.ELYTRA)) {  // this line checks if player has elytra
-			if (!onGround && !player.isClimbing() && !player.isTouchingWater()) {  //while this line makes sure that player is in the air, is not climbing and is not swimming
+			if (!onGround && !player.isClimbing() && !player.isTouchingWater()) {  //this line makes sure that player is in the air, is not climbing and is not swimming
 				if (heightDifference < 0 && getFallHeight(player) > 5) { // and here we check i player is falling down and there are at least 5 blocks of empty space below him
 					InventoryHelper.replaceChestplateWithElytra(flatInventory);
 					((EntitySetFlagInvoker)player).invokeSetFlag(7, true);    // thanks to this line you do not have to press space in order to start gliding
