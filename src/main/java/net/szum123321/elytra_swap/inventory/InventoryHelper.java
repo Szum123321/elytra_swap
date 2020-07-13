@@ -19,14 +19,13 @@
 package net.szum123321.elytra_swap.inventory;
 
 import dev.emi.trinkets.api.TrinketSlots;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.ByteTag;
+import net.szum123321.elytra_swap.LoreHelper;
 import net.szum123321.elytra_swap.data.MutablePair;
-import net.szum123321.elytra_swap.enchantment.ModEnchantments;
 
 /*
 	Utility class for actually swapping elytra with chestplate and back.
@@ -128,7 +127,7 @@ public class InventoryHelper {
 		if (stack.getTag() != null && stack.getTag().getByte("swapped_item") == 1)
 			p = 1;
 
-		p = Math.max(p, EnchantmentHelper.getLevel(ModEnchantments.SWAPPINESS, stack));
+		p = Math.max(p, LoreHelper.get(stack) + 1);
 
 		return p;
 	}

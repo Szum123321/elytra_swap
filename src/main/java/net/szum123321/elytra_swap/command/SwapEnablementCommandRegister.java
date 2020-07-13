@@ -18,32 +18,76 @@
 
 package net.szum123321.elytra_swap.command;
 
-import com.mojang.brigadier.arguments.BoolArgumentType;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import dev.emi.trinkets.api.Trinket;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
+import net.minecraft.item.ElytraItem;
+import net.minecraft.item.ItemStack;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.LiteralText;
 import net.szum123321.elytra_swap.ElytraSwap;
+import net.szum123321.elytra_swap.LoreHelper;
 
 public class SwapEnablementCommandRegister {
 	public static void register() {
-		CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> dispatcher.register(CommandManager.literal("swap")
-			.then(CommandManager.argument("operation", BoolArgumentType.bool())
-					.executes(SwapEnablementCommandRegister::execute)
-			).executes(ctx -> {
-				ctx.getSource().getPlayer().sendMessage(new TranslatableText("Available options are: true(enable), false(disable). Now Elytra Swap is: %s", ElytraSwap.serverSwapStateHandler.getSwapState(ctx.getSource().getPlayer()) ? "Enabled" : "Disabled"),false);
-				return 1;
-			})
-		));
+		CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> dispatcher.register(
+				(LiteralArgumentBuilder)(CommandManager.literal("swap")
+				.then(CommandManager.literal("apply").then(
+						(RequiredArgumentBuilder)CommandManager.argument("value", IntegerArgumentType.integer(0, 10))
+								.executes(SwapEnablementCommandRegister::executeApply)
+				))
+				).then(CommandManager.literal("toggle")
+						.then(CommandManager.literal("enable").executes(ctx -> executeToggle(ctx, true)))
+						.then(CommandManager.literal("disable").executes(ctx -> executeToggle(ctx, false)))
+				)
+			)
+		);
 	}
 
-	private static int execute(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
-		ElytraSwap.serverSwapStateHandler.setSwapState(ctx.getSource().getPlayer(), BoolArgumentType.getBool(ctx, "operation"), true);
 
-		ctx.getSource().getPlayer().sendMessage(new TranslatableText("Elytra Swap is %s", ElytraSwap.serverSwapStateHandler.getSwapState(ctx.getSource().getPlayer()) ? "Enabled" : "Disabled"), false);
+	private static int executeToggle(CommandContext<ServerCommandSource> ctx, boolean state) throws CommandSyntaxException {
+		ElytraSwap.serverSwapStateHandler.setSwapState(ctx.getSource().getPlayer(), state, true);
 
+		ctx.getSource().sendFeedback(new LiteralText("Elytra Swap is: " + (ElytraSwap.serverSwapStateHandler.getSwapState(ctx.getSource().getPlayer()) ? "enabled" : "disabled")), false);
+
+		return 1;
+	}
+
+	private static int executeApply(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
+		int a = IntegerArgumentType.getInteger(ctx, "value");
+		ServerPlayerEntity playerEntity = ctx.getSource().getPlayer();
+
+		ItemStack stack = playerEntity.getMainHandStack();
+
+		if(stack.isEmpty())
+			stack = playerEntity.getOffHandStack();
+
+		if(!stack.isEmpty()) {
+			if(stack.getItem() instanceof Trinket || stack.getItem() instanceof ElytraItem) {
+				LoreHelper.apply(stack, a);
+			}
+		}
+
+		return 1;
+	}
+
+	private static int executeApplyHelp(CommandContext<ServerCommandSource> ctx) {
+		return 1;
+	}
+
+	private static int executeToggleHelp(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
+		//ctx.getSource().sendFeedback(new LiteralText("Available options are: true(enable), false(disable). Now Elytra Swap is: " + (ElytraSwap.serverSwapStateHandler.getSwapState(ctx.getSource().getPlayer()) ? "enabled" : "disabled")),false);
+		return 1;
+	}
+
+	private static int executeHelp(CommandContext<ServerCommandSource> ctx) {
+		//ctx.getSource().sendFeedback(new LiteralText("Available commands are: toggle, apply"), false);
 		return 1;
 	}
 }
