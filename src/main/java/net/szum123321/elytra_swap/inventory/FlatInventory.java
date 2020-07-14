@@ -19,6 +19,7 @@
 package net.szum123321.elytra_swap.inventory;
 
 import dev.emi.trinkets.api.Slots;
+import dev.emi.trinkets.api.Trinket;
 import dev.emi.trinkets.api.TrinketSlots;
 import dev.emi.trinkets.api.TrinketsApi;
 import net.fabricmc.loader.api.FabricLoader;
@@ -62,7 +63,8 @@ public class FlatInventory {
 			if (i == 38) //Chestplate slot
 				specialSlots.put(SpecialSlots.CHESTPLATE, slots.size());
 
-			slots.add(new Slot(InventoryType.VANILLA, i));
+			if(!player.inventory.getStack(i).isEmpty())
+				slots.add(new Slot(InventoryType.VANILLA, i));
 
 			if (player.inventory.getStack(i).getItem() instanceof BlockItem &&
 					((BlockItem) player.inventory.getStack(i).getItem()).getBlock() instanceof ShulkerBoxBlock &&
@@ -79,7 +81,8 @@ public class FlatInventory {
 				if (TrinketSlots.getAllSlots().get(i).getName().equals(Slots.CAPE))
 					specialSlots.put(SpecialSlots.CAPE, slots.size());
 
-				slots.add(new Slot(InventoryType.TRINKETS, i));
+				if(!TrinketsApi.getTrinketsInventory(player).getStack(i).isEmpty())
+					slots.add(new Slot(InventoryType.TRINKETS, i));
 
 				if (tInv.getStack(i).getItem() instanceof BlockItem &&
 						((BlockItem) tInv.getStack(i).getItem()).getBlock() instanceof ShulkerBoxBlock &&
