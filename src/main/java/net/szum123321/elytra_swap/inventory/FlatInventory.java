@@ -19,10 +19,8 @@
 package net.szum123321.elytra_swap.inventory;
 
 import dev.emi.trinkets.api.Slots;
-import dev.emi.trinkets.api.Trinket;
 import dev.emi.trinkets.api.TrinketSlots;
 import dev.emi.trinkets.api.TrinketsApi;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.ShulkerBoxBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventories;
@@ -32,9 +30,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.util.registry.Registry;
 import net.szum123321.elytra_swap.ElytraSwap;
 import net.szum123321.elytra_swap.handlers.ServerSwapStateHandler;
 
@@ -44,8 +40,8 @@ import java.util.List;
 import java.util.Map;
 
 /*
-	This class turns players' inventory into flat list (including shulkers and trinkets).
-	Basically a inventory abstraction layer. :)
+	This class turns players' inventory into a flat list (including shulkers and trinkets).
+	Basically an inventory abstraction layer. :)
 	Compatibility with other mods can be easily added
 */
 public class FlatInventory {
@@ -60,8 +56,12 @@ public class FlatInventory {
 								(ElytraSwap.serverSwapStateHandler.getTrinketsSupport(player) == ServerSwapStateHandler.Tristate.TRUE);
 
 		for (int i = 0; i < player.inventory.size(); i++) {
-			if (i == 38) //Chestplate slot
+			if (i == 38) { //Chestplate slot
 				specialSlots.put(SpecialSlots.CHESTPLATE, slots.size());
+
+				if(player.inventory.getStack(i).isEmpty())  // so that this slot gets added if it is empty
+					slots.add(new Slot(InventoryType.VANILLA, i));
+			}
 
 			if(!player.inventory.getStack(i).isEmpty())
 				slots.add(new Slot(InventoryType.VANILLA, i));
@@ -78,8 +78,12 @@ public class FlatInventory {
 			Inventory tInv = TrinketsApi.getTrinketsInventory(this.player);
 
 			for (int i = 0; i < TrinketSlots.getSlotCount(); i++) {
-				if (TrinketSlots.getAllSlots().get(i).getName().equals(Slots.CAPE))
+				if (TrinketSlots.getAllSlots().get(i).getName().equals(Slots.CAPE)) {
 					specialSlots.put(SpecialSlots.CAPE, slots.size());
+
+					if(TrinketsApi.getTrinketsInventory(player).getStack(i).isEmpty())
+						slots.add(new Slot(InventoryType.TRINKETS, i));
+				}
 
 				if(!TrinketsApi.getTrinketsInventory(player).getStack(i).isEmpty())
 					slots.add(new Slot(InventoryType.TRINKETS, i));
