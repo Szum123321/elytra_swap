@@ -32,7 +32,6 @@ import org.apache.logging.log4j.Logger;
     Main class. Mostly static variables and initialization stuff.
     If you are looking for client init, head to client/ElytraSwapClientInit.
 */
-
 public class ElytraSwap implements ModInitializer {
     public static final String MOD_ID = "elytra_swap";
 

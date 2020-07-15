@@ -27,7 +27,6 @@ import java.util.Scanner;
 /*
     This class allows for saving and loading last state in which elytra swap was (enabled or disabled).
 */
-
 public class ClientSwapStateHandler {
     private boolean state;
 

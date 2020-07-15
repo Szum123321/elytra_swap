@@ -33,7 +33,6 @@ import java.util.Objects;
     This class was inspired by https://github.com/QsPD-Minecraft/Fabric-Server-Enchantments/blob/master/src/main/java/io/github/qspdmc/util/LoreUtil.java
     written by Devan-Kerman and licensed under LGPL-3.
 */
-
 public class LoreHelper {
     private final static String loreItemName = "Swap Priority: ";
 
@@ -50,23 +49,20 @@ public class LoreHelper {
             return false;
         });
 
-        if(level > 0) {
+        if(level > 0)
             lore.add(0, StringTag.of(Text.Serializer.toJson(new LiteralText(loreItemName).append(new TranslatableText("enchantment.level." + level)))));
-        }
 
         display.put("Lore", lore);
     }
 
     public static int get(ItemStack stack) {
-        CompoundTag display = stack.getOrCreateSubTag("display");
-        ListTag lore = display.getList("Lore", 8);
-
-        return lore.stream()
+        return stack.getOrCreateSubTag("display")
+                .getList("Lore", 8).stream()
                 .filter(tag -> tag instanceof StringTag)
                 .map(Tag::asString)
                 .map(Text.Serializer::fromJson)
                 .filter(Objects::nonNull)
-                .filter(text -> text.getString().startsWith(loreItemName))
+                .filter(text -> text.asString().startsWith(loreItemName))
                 .flatMap(text -> text.getSiblings().stream())
                 .filter(text -> text instanceof TranslatableText)
                 .map(text -> ((TranslatableText) text).getKey())
