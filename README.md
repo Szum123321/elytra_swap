@@ -21,3 +21,4 @@ Main features are:
 * Elytra Swap is currently compatible with: [Trinkets(Fabric)](https://www.curseforge.com/minecraft/mc-mods/trinkets-fabric)
 * Third party libraries included are: [cotton-config and cotton-logging](https://github.com/CottonMC/Cotton), [Jankson-fabric](https://github.com/CottonMC/Jankson-Fabric)
 * If you find any problem, or would like to see a new feature added to this mod, please go to [Github](https://github.com/Szum123321/elytra_swap/issues) and create an issue.
+* If you have a question regading this mod, make sure that it hasn't been answered in [FAQ](https://github.com/Szum123321/elytra_swap/blob/master/FAQ.MD).
