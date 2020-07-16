@@ -48,6 +48,10 @@ public class ConfigHandler {
 					"Default: ENABLE\n")
 	public EnableDisableEnum noModPlayersDefaultState = EnableDisableEnum.ENABLE;
 
+	@Comment(value = "\nBy setting this to DISABLE, you can completely disable firework usage.\n" +
+					"Default: ENABLE\n")
+	public EnableDisableEnum useFireworks = EnableDisableEnum.ENABLE;
+
 	public enum EnableDisableEnum {
 		ENABLE(true),
 		DISABLE(false);

@@ -45,12 +45,13 @@ public abstract class FireworkItemMixin extends Item {
 	// function below gets invoked only when player uses firework while standing on ground and clicks in the air
 	@Inject(method = "use", at = @At(value = "RETURN", ordinal = 1))
 	private void fireworkUsageHandler(World world, PlayerEntity player, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> ci) {
-		if (player instanceof ServerPlayerEntity &&
-			player.isOnGround() &&
-			TakeoffHandler.checkSpaceOverPlayer(player, ElytraSwap.CONFIG.requiredHeightAbovePlayer) &&
-			ElytraSwap.serverSwapStateHandler.getSwapState(player) &&
-			(ServerSidePacketRegistry.INSTANCE.canPlayerReceive(player, ElytraSwap.DUMMY_PACKAGE) || ElytraSwap.CONFIG.noModPlayersHandlingMethod == 1) &&
-			new FlatInventory(player).hasItem(Items.ELYTRA)) {
+		if (ElytraSwap.CONFIG.useFireworks.getState() &&
+				player instanceof ServerPlayerEntity &&
+				player.isOnGround() &&
+				TakeoffHandler.checkSpaceOverPlayer(player, ElytraSwap.CONFIG.requiredHeightAbovePlayer) &&
+				ElytraSwap.serverSwapStateHandler.getSwapState(player) &&
+				(ServerSidePacketRegistry.INSTANCE.canPlayerReceive(player, ElytraSwap.DUMMY_PACKAGE) || ElytraSwap.CONFIG.noModPlayersHandlingMethod == 1) &&
+				new FlatInventory(player).hasItem(Items.ELYTRA)) {
 
 			TakeoffHandler.sendUpdate(world, player, hand);
 		}
