@@ -19,8 +19,6 @@
 package net.szum123321.elytra_swap.command;
 
 import com.mojang.brigadier.arguments.IntegerArgumentType;
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import dev.emi.trinkets.api.Trinket;
@@ -36,16 +34,15 @@ import net.minecraft.util.Formatting;
 import net.szum123321.elytra_swap.ElytraSwap;
 
 
-//TODO: add help, make "value" always show up.
 public class SwapEnablementCommandRegister {
 	public static void register() {
 		CommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> dispatcher.register(
-				(LiteralArgumentBuilder)(CommandManager.literal("swap")
+				CommandManager.literal("swap")
 				.then(CommandManager.literal("apply").then(
-						(RequiredArgumentBuilder)CommandManager.argument("value", IntegerArgumentType.integer(0, 10))
+						CommandManager.argument("value", IntegerArgumentType.integer(0, 10))
 								.executes(SwapEnablementCommandRegister::executeApply))
 						.executes(SwapEnablementCommandRegister::executeApplyHelp)
-				)).then(CommandManager.literal("toggle")
+				).then(CommandManager.literal("toggle")
 						.then(CommandManager.literal("enable").executes(ctx -> executeToggle(ctx, true)))
 						.then(CommandManager.literal("disable").executes(ctx -> executeToggle(ctx, false)))
 						.executes(SwapEnablementCommandRegister::executeToggleHelp)
@@ -76,6 +73,8 @@ public class SwapEnablementCommandRegister {
 			} else {
 				ctx.getSource().sendFeedback(new LiteralText("Sorry, but you cannot set priority on this item!").formatted(Formatting.RED), false);
 			}
+		} else {
+			ctx.getSource().sendFeedback(new LiteralText("There is no item in your hand right now."), false);
 		}
 
 		return 1;
@@ -83,19 +82,20 @@ public class SwapEnablementCommandRegister {
 
 	private static int executeApplyHelp(CommandContext<ServerCommandSource> ctx) {
 		ctx.getSource().sendFeedback(new LiteralText("With this command you can set swap priority for an item in your hand."), false);
-		ctx.getSource().sendFeedback(new LiteralText("Values range from 0 (removes priority.), to 10 (max)"), false);
+		ctx.getSource().sendFeedback(new LiteralText("Values range from 0 (removes priority), to 10 (max)"), false);
 
 		return 1;
 	}
 
 	private static int executeToggleHelp(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
-		ctx.getSource().sendFeedback(new LiteralText("Available options are: enable, disable. Now Elytra Swap is: " + (ElytraSwap.serverSwapStateHandler.getSwapState(ctx.getSource().getPlayer()) ? "enabled" : "disabled")),false);
+		ctx.getSource().sendFeedback(new LiteralText("This command enables or disabled swapping and firework takeoff feature."), false);
+		ctx.getSource().sendFeedback(new LiteralText("Available options are: enable, disable. Now, Elytra Swap is: " + (ElytraSwap.serverSwapStateHandler.getSwapState(ctx.getSource().getPlayer()) ? "enabled" : "disabled") + "."),false);
 
 		return 1;
 	}
 
 	private static int executeHelp(CommandContext<ServerCommandSource> ctx) {
-		ctx.getSource().sendFeedback(new LiteralText("Available commands are: toggle, apply"), false);
+		ctx.getSource().sendFeedback(new LiteralText("Available commands are: toggle, apply."), false);
 
 		return 1;
 	}
