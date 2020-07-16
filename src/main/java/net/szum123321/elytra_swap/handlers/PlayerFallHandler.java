@@ -52,7 +52,7 @@ public class PlayerFallHandler {
 		while (true) {
 			if (temp.getY() < 0)
 				return Float.POSITIVE_INFINITY; // You can fall "forever"
-			else if (player.world.getBlockState(temp).getMaterial().isSolid())
+			else if (player.world.getBlockState(temp).getMaterial().isSolid() || !player.world.getFluidState(temp).isEmpty())
 				return (float) (player.getY() - temp.getY()); // There's some solid block beneath you
 			else
 				temp.setY(temp.getY() - 1); // We're still looking, go down again
