@@ -11,7 +11,7 @@ Elytra Swap is a server-side, Fabric-only mod, that does a lot of things:
  * When you click with a firework rocket in your hand, you will be propelled up in the air. (Similar to [Easy Elytra Takeoff by Serilum](https://www.curseforge.com/minecraft/mc-mods/easy-elytra-takeoff))
  * If client also has the mod installed, then you can use a keybind in order to enable and disable automatic swapping and firework takeoff.
  
-For more info, please read the [wiki]().
+For more info, please read the [wiki](https://github.com/Szum123321/elytra_swap/wiki).
  
 <center><a href="https://www.curseforge.com/minecraft/mc-mods/fabric-api">
 <img src="https://i.imgur.com/Ol1Tcf8.png" alt="fabric" width=300 >
