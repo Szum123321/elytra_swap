@@ -1,16 +1,17 @@
 {
-	"required": true,
-	"package": "net.szum123321.elytra_swap.mixin",
-	"compatibilityLevel": "JAVA_8",
-	"mixins": [
-		"EntitySetFlagInvoker",
-		"ServerPlayerEntityMixin",
-		"FireworkItemMixin"
-	],
-	"client": [
-		"ClientServerJoin"
-	],
-	"injectors": {
-		"defaultRequire": 1
+  "required": true,
+  "package": "net.szum123321.elytra_swap.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "EntitySetFlagInvoker",
+    "FireworkItemMixin",
+    "PlayerManagerMixin",
+    "ServerPlayerEntityMixin"
+  ],
+  "client": [
+    "ClientServerJoin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
 	}
 }
