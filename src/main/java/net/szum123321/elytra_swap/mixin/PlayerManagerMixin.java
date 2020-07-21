@@ -6,6 +6,7 @@ import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.LiteralText;
+import net.minecraft.util.Formatting;
 import net.szum123321.elytra_swap.ElytraSwap;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -20,7 +21,10 @@ public class PlayerManagerMixin {
             player.sendMessage(
                     new LiteralText("Hi! This server uses Elytra Swap mod, which partially alters elytra mechanics.\n")
                     .append("For more info see: ")
-                    .append(new LiteralText("[Elytra Swap wiki].").styled(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/Szum123321/elytra_swap/wiki"))))
+                    .append(new LiteralText("Elytra Swap wiki.")
+                            .styled(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/Szum123321/elytra_swap/wiki")))
+                            .formatted(Formatting.UNDERLINE, Formatting.AQUA)
+                    )
                     , false
             );
         }
