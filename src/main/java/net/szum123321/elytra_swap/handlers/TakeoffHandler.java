@@ -31,7 +31,6 @@ import net.szum123321.elytra_swap.ElytraSwap;
 
 public class TakeoffHandler {
 	public static void sendUpdate(World world, PlayerEntity player, Hand hand) {
-
 		ServerSidePacketRegistry.INSTANCE.sendToPlayer(player,
 				new EntityVelocityUpdateS2CPacket(player.getEntityId(),
 						new Vec3d(-Math.sin(Math.toRadians(player.yaw)) * ElytraSwap.CONFIG.kickSpeed,

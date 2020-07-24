@@ -1,7 +1,6 @@
 package net.szum123321.elytra_swap.mixin;
 
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
-import net.minecraft.class_5404;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.dedicated.DedicatedPlayerManager;
