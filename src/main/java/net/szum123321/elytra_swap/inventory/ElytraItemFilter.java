@@ -20,6 +20,7 @@ package net.szum123321.elytra_swap.inventory;
 
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.item.Item;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -27,6 +28,8 @@ import net.szum123321.elytra_swap.ElytraSwap;
 
 import java.io.*;
 import java.lang.reflect.Type;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -35,11 +38,7 @@ public class ElytraItemFilter {
     private Set<Item> items;
 
     public ElytraItemFilter () {
-        File idListFile = new File(getClass().getClassLoader().getResource("assets/elytra_swap/elytra_like_item_set.json").getFile());
-
-        if(!idListFile.exists()) {
-            ElytraSwap.LOGGER.error("File: {} does not exists! Mod integration will not be available!", getClass().getClassLoader().getResource("assets/elytra_swap/elytra_like_item_set.json").getFile());
-        }
+        Path path = FabricLoader.getInstance().getModContainer(ElytraSwap.MOD_ID).get().getRootPath().resolve("/elytra_like_item_set.json");
 
         Type type = new TypeToken<HashSet<Identifier>>(){}.getType();
 
@@ -47,10 +46,10 @@ public class ElytraItemFilter {
                 .registerTypeAdapter(Identifier.class, (JsonDeserializer<Identifier>) (json, typeOfT, context) -> new Identifier(json.getAsString().split(":")[0], json.getAsString().split(":")[1]))
                 .create();
 
-        try (FileReader reader = new FileReader(idListFile)) {
+        try {
             final Item defaultItem = Registry.ITEM.get(Registry.ITEM.getDefaultId());
 
-            items = ((Set<Identifier>)gson.fromJson(reader, type))
+            items = ((Set<Identifier>)gson.fromJson(new String(Files.readAllBytes(path)), type))
                     .stream()
                     .map(Registry.ITEM::get)
                     .filter(item -> item != defaultItem)
