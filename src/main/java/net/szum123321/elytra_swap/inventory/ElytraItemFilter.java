@@ -46,10 +46,11 @@ public class ElytraItemFilter {
                 .registerTypeAdapter(Identifier.class, (JsonDeserializer<Identifier>) (json, typeOfT, context) -> new Identifier(json.getAsString().split(":")[0], json.getAsString().split(":")[1]))
                 .create();
 
-        try {
+        try (InputStream inputStream = Files.newInputStream(path)) {
             final Item defaultItem = Registry.ITEM.get(Registry.ITEM.getDefaultId());
 
-            items = ((Set<Identifier>)gson.fromJson(new String(Files.readAllBytes(path)), type))
+            //noinspection unchecked
+            items = ((Set<Identifier>)gson.fromJson(new InputStreamReader(inputStream), type))
                     .stream()
                     .map(Registry.ITEM::get)
                     .filter(item -> item != defaultItem)
