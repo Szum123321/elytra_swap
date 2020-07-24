@@ -19,6 +19,7 @@ For more info, please read the [wiki](https://github.com/Szum123321/elytra_swap/
  
 This mod is also compatible with:
  * [Trinkets(Fabric) by EmilyPloszaj](https://www.curseforge.com/minecraft/mc-mods/trinkets-fabric) 
+ * [Netherite Plus by OroArmor](https://www.curseforge.com/minecraft/mc-mods/netherite-plus-mod) (Since 2.1.0)
  
 Things to keep in mind:
  * This mod **WILL NOT** work on servers if it's only installed on the client.
