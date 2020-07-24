@@ -22,6 +22,7 @@ import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.item.Item;
+import net.minecraft.item.Items;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.szum123321.elytra_swap.ElytraSwap;
@@ -57,6 +58,7 @@ public class ElytraItemFilter {
                     .collect(Collectors.toSet());
         } catch (IOException e) {
             ElytraSwap.LOGGER.error("Something went wrong while trying to deserialize elytra ids list!", e);
+            items = Set.of(Items.ELYTRA);
         }
     }
 

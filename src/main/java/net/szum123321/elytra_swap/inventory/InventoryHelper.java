@@ -67,7 +67,8 @@ public class InventoryHelper {
 		MutablePair<Integer, Integer> result = new MutablePair<>(-1, -1);
 
 		for(int i = 0; i < inv.getSize(); i++) {
-			if(inv.getItemStack(i).getItem() instanceof ArmorItem) {
+			if(inv.getItemStack(i).getItem() instanceof ArmorItem &&
+				!ElytraSwap.elytraItemFilter.isElytraLike(inv.getItemStack(i).getItem())) {
 				ArmorItem armorItem = (ArmorItem)inv.getItemStack(i).getItem();
 
 				if(armorItem.getSlotType() == EquipmentSlot.CHEST) {
