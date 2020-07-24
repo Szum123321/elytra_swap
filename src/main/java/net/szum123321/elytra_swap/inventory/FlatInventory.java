@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 /*
 	This class turns players' inventory into a flat list (including shulkers and trinkets).
@@ -202,7 +203,7 @@ public class FlatInventory {
 		setItemStack(indexA, getItemStack(indexB));
 		setItemStack(indexB, temp);
 	}
-
+/*
 	public PlayerEntity getPlayer() {
 		return player;
 	}
@@ -210,6 +211,15 @@ public class FlatInventory {
 	public boolean hasItem(Item item) {
 		for (int i = 0; i < slots.size(); i++) {
 			if (getItemStack(i).getItem() == item)
+				return true;
+		}
+
+		return false;
+	}
+*/
+	public boolean hasOne(Predicate<ItemStack> predicate) {
+		for (int i = 0; i < slots.size(); i++) {
+			if(predicate.test(getItemStack(i)))
 				return true;
 		}
 

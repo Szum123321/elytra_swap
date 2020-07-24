@@ -22,8 +22,8 @@ import dev.emi.trinkets.api.TrinketSlots;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.nbt.ByteTag;
+import net.szum123321.elytra_swap.ElytraSwap;
 import net.szum123321.elytra_swap.command.LoreHelper;
 import net.szum123321.elytra_swap.data.MutablePair;
 
@@ -34,7 +34,7 @@ public class InventoryHelper {
 	private static final String swapTag = "swapped_item";
 
 	public static void replaceElytraWithChestplate(FlatInventory inv) {
-		if(inv.getItemStack(inv.getElytraSlotId()).getItem() == Items.ELYTRA) {
+		if(ElytraSwap.elytraItemFilter.isElytraLike(inv.getItemStack(inv.getElytraSlotId()).getItem())) {
 			int var1 = -1;
 
 			if(!inv.hasTrinkets()) { // isVanilla => ElytraSlotId == ChestplateSlotId
@@ -52,7 +52,7 @@ public class InventoryHelper {
 	}
 
 	public static void replaceChestplateWithElytra(FlatInventory inv) {
-		if (inv.getItemStack(inv.getElytraSlotId()).getItem() != Items.ELYTRA) {
+		if (!ElytraSwap.elytraItemFilter.isElytraLike(inv.getItemStack(inv.getElytraSlotId()).getItem())) {
 			int var1 = getBestElytra(inv);
 
 			if(var1 >= 0 && var1 != inv.getElytraSlotId()) {
@@ -88,7 +88,7 @@ public class InventoryHelper {
 		MutablePair<Integer, Integer> result = new MutablePair<>(-1, -1);
 
 		for(int i = 0; i < inv.getSize(); i++) {
-			if(inv.getItemStack(i).getItem() == Items.ELYTRA) {
+			if(ElytraSwap.elytraItemFilter.isElytraLike(inv.getItemStack(i).getItem())) {
 				int var1 = getPriority(inv.getItemStack(i));
 
 				if(var1 > result.getLast()) {
@@ -106,7 +106,7 @@ public class InventoryHelper {
 		MutablePair<Integer, Integer> result = new MutablePair<>(-1, -1);
 
 		for(int i = 0; i < inv.getSize(); i++) {
-			if(inv.getItemStack(i).getItem() != Items.ELYTRA &&
+			if(!ElytraSwap.elytraItemFilter.isElytraLike(inv.getItemStack(i).getItem()) &&
 					trinketSlot.canEquip.apply(trinketSlot, inv.getItemStack(i))) {
 
 				int var1 = getPriority(inv.getItemStack(i));

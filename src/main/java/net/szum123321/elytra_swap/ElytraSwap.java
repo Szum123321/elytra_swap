@@ -25,6 +25,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.util.Identifier;
 import net.szum123321.elytra_swap.command.SwapEnablementCommandRegister;
 import net.szum123321.elytra_swap.handlers.ServerSwapStateHandler;
+import net.szum123321.elytra_swap.inventory.ElytraItemFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -43,6 +44,7 @@ public class ElytraSwap implements ModInitializer {
     public static final Logger LOGGER = LogManager.getFormatterLogger("Elytra Swap");
 
     public static ServerSwapStateHandler serverSwapStateHandler;
+    public static ElytraItemFilter elytraItemFilter;
     public static boolean hasTrinkets;
 
     @Override
@@ -51,13 +53,15 @@ public class ElytraSwap implements ModInitializer {
 
         CONFIG = ConfigManager.loadConfig(ConfigHandler.class);
 
-        registerSwapToggle();
-
-        SwapEnablementCommandRegister.register();
+        elytraItemFilter = new ElytraItemFilter();
 
         serverSwapStateHandler = new ServerSwapStateHandler();
 
         hasTrinkets = FabricLoader.getInstance().isModLoaded("trinkets");
+
+        registerSwapToggle();
+
+        SwapEnablementCommandRegister.register();
     }
 
     private void registerSwapToggle() {

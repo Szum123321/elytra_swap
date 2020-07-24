@@ -23,7 +23,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.FireworkItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
@@ -51,7 +50,7 @@ public abstract class FireworkItemMixin extends Item {
 				TakeoffHandler.checkSpaceOverPlayer(player, ElytraSwap.CONFIG.requiredHeightAbovePlayer) &&
 				ElytraSwap.serverSwapStateHandler.getSwapState(player) &&
 				(ServerSidePacketRegistry.INSTANCE.canPlayerReceive(player, ElytraSwap.DUMMY_PACKAGE) || ElytraSwap.CONFIG.noModPlayersHandlingMethod == 1) &&
-				new FlatInventory(player).hasItem(Items.ELYTRA)) {
+				new FlatInventory(player).hasOne(itemStack -> ElytraSwap.elytraItemFilter.isElytraLike(itemStack.getItem()))) {
 
 			TakeoffHandler.sendUpdate(world, player, hand);
 		}

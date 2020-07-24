@@ -19,8 +19,8 @@
 package net.szum123321.elytra_swap.handlers;
 
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Items;
 import net.minecraft.util.math.BlockPos;
+import net.szum123321.elytra_swap.ElytraSwap;
 import net.szum123321.elytra_swap.inventory.FlatInventory;
 import net.szum123321.elytra_swap.inventory.InventoryHelper;
 import net.szum123321.elytra_swap.mixin.EntitySetFlagInvoker;
@@ -32,7 +32,7 @@ public class PlayerFallHandler {
 	public static void handleFalling(PlayerEntity player, double heightDifference, boolean onGround) {
 		FlatInventory flatInventory = new FlatInventory(player);
 
-		if (flatInventory.hasItem(Items.ELYTRA)) {  // this line checks if player has elytra
+		if (flatInventory.hasOne(itemStack -> ElytraSwap.elytraItemFilter.isElytraLike(itemStack.getItem()))) {  // this line checks if player has elytra
 			if (!onGround && !player.isClimbing() && !player.isTouchingWater()) {  //this line makes sure that player is in the air, is not climbing and is not swimming
 				if (heightDifference < 0 && getFallHeight(player) > 5) { // and here we check i player is falling down and there are at least 5 blocks of empty space below him
 					InventoryHelper.replaceChestplateWithElytra(flatInventory);
