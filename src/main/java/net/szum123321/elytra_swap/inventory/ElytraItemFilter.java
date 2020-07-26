@@ -41,7 +41,7 @@ public class ElytraItemFilter {
     public ElytraItemFilter () {
         Path path = FabricLoader.getInstance().getModContainer(ElytraSwap.MOD_ID).get().getRootPath().resolve("/elytra_like_item_set.json");
 
-        Type type = new TypeToken<HashSet<Identifier>>(){}.getType();
+        Type type = new TypeToken<HashSet<ElytraLikeItemEntry>>(){}.getType();
 
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(Identifier.class, (JsonDeserializer<Identifier>) (json, typeOfT, context) -> new Identifier(json.getAsString().split(":")[0], json.getAsString().split(":")[1]))
@@ -49,13 +49,16 @@ public class ElytraItemFilter {
 
         try (InputStream inputStream = Files.newInputStream(path)) {
             final Item defaultItem = Registry.ITEM.get(Registry.ITEM.getDefaultId());
+            final boolean isTrinketsLoaded = FabricLoader.getInstance().isModLoaded("trinkets");
 
             //noinspection unchecked
-            items = ((Set<Identifier>)gson.fromJson(new InputStreamReader(inputStream), type))
+            items = ((Set<ElytraLikeItemEntry>)gson.fromJson(new InputStreamReader(inputStream), type))
                     .stream()
+                    .filter(entry -> entry.isTrinketCompatible() || !isTrinketsLoaded)
+                    .map(ElytraLikeItemEntry::getIdentifier)
                     .map(Registry.ITEM::get)
                     .filter(item -> item != defaultItem)
-                    .collect(Collectors.toSet());
+                    .collect(Collectors.toUnmodifiableSet());
         } catch (IOException e) {
             ElytraSwap.LOGGER.error("Something went wrong while trying to deserialize elytra ids list!", e);
             items = Set.of(Items.ELYTRA);
@@ -64,5 +67,23 @@ public class ElytraItemFilter {
 
     public boolean isElytraLike(Item item) {
         return items.contains(item);
+    }
+
+    private static class ElytraLikeItemEntry {
+        private final Identifier identifier;
+        private final boolean trinketCompatible;
+
+        public ElytraLikeItemEntry(Identifier identifier, boolean trinketCompatible) {
+            this.identifier = identifier;
+            this.trinketCompatible = trinketCompatible;
+        }
+
+        public Identifier getIdentifier() {
+            return identifier;
+        }
+
+        public boolean isTrinketCompatible() {
+            return trinketCompatible;
+        }
     }
 }

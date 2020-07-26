@@ -1,4 +1,10 @@
 [
-  "minecraft:elytra",
-  "netherite_plus:netherite_elytra"
+  {
+    "identifier": "minecraft:elytra",
+    "trinketCompatible": true
+  },
+  {
+    "identifier": "netherite_plus:netherite_elytra",
+    "trinketCompatible": true
+  }
 ]
