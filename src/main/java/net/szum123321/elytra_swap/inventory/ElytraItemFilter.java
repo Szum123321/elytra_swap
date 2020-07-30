@@ -31,7 +31,8 @@ import java.io.*;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -39,9 +40,14 @@ public class ElytraItemFilter {
     private Set<Item> items;
 
     public ElytraItemFilter () {
-        Path path = FabricLoader.getInstance().getModContainer(ElytraSwap.MOD_ID).get().getRootPath().resolve("/elytra_like_item_set.json");
+        Path path;
 
-        Type type = new TypeToken<HashSet<ElytraLikeItemEntry>>(){}.getType();
+        if(FabricLoader.getInstance().isDevelopmentEnvironment())
+            path = Path.of(getClass().getResource("/elytra_like_item_set.json").getPath());
+        else
+            path = FabricLoader.getInstance().getModContainer(ElytraSwap.MOD_ID).get().getRootPath().resolve("/elytra_like_item_set.json");
+
+        Type type = new TypeToken<ArrayList<ElytraLikeItemEntry>>(){}.getType();
 
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(Identifier.class, (JsonDeserializer<Identifier>) (json, typeOfT, context) -> new Identifier(json.getAsString().split(":")[0], json.getAsString().split(":")[1]))
@@ -52,7 +58,7 @@ public class ElytraItemFilter {
             final boolean isTrinketsLoaded = FabricLoader.getInstance().isModLoaded("trinkets");
 
             //noinspection unchecked
-            items = ((Set<ElytraLikeItemEntry>)gson.fromJson(new InputStreamReader(inputStream), type))
+            items = ((List<ElytraLikeItemEntry>)gson.fromJson(new InputStreamReader(inputStream), type))
                     .stream()
                     .filter(entry -> entry.isTrinketCompatible() || !isTrinketsLoaded)
                     .map(ElytraLikeItemEntry::getIdentifier)
@@ -60,7 +66,7 @@ public class ElytraItemFilter {
                     .filter(item -> item != defaultItem)
                     .collect(Collectors.toUnmodifiableSet());
         } catch (IOException e) {
-            ElytraSwap.LOGGER.error("Something went wrong while trying to deserialize elytra ids list!", e);
+            ElytraSwap.LOGGER.error("Something went wrong while trying to read elytra ids list!", e);
             items = Set.of(Items.ELYTRA);
         }
     }
