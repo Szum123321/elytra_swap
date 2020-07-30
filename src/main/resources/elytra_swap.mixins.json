@@ -9,7 +9,11 @@
     "ServerPlayerEntityMixin"
   ],
   "client": [
-    "ClientServerJoin"
+    "client.ClientPlayNetworkHandlerMixin",
+    "client.MinecraftClientMixin"
+  ],
+  "server": [
+    "dedicated.MinecraftDedicatedServerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

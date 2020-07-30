@@ -24,6 +24,7 @@ import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.util.Identifier;
 import net.szum123321.elytra_swap.command.SwapEnablementCommandRegister;
+import net.szum123321.elytra_swap.event.GameReadyCallback;
 import net.szum123321.elytra_swap.handlers.ServerSwapStateHandler;
 import net.szum123321.elytra_swap.inventory.ElytraItemFilter;
 import org.apache.logging.log4j.LogManager;
@@ -53,8 +54,6 @@ public class ElytraSwap implements ModInitializer {
 
         CONFIG = ConfigManager.loadConfig(ConfigHandler.class);
 
-        elytraItemFilter = new ElytraItemFilter();
-
         serverSwapStateHandler = new ServerSwapStateHandler();
 
         hasTrinkets = FabricLoader.getInstance().isModLoaded("trinkets");
@@ -62,6 +61,8 @@ public class ElytraSwap implements ModInitializer {
         registerSwapToggle();
 
         SwapEnablementCommandRegister.register();
+
+        GameReadyCallback.EVENT.register(gameInstance -> elytraItemFilter = new ElytraItemFilter());
     }
 
     private void registerSwapToggle() {
