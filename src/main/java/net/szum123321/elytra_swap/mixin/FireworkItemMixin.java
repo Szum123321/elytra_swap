@@ -42,7 +42,7 @@ public abstract class FireworkItemMixin extends Item {
 	}
 
 	// function below gets invoked only when player uses firework while standing on ground and clicks in the air
-	@Inject(method = "use", at = @At(value = "RETURN", ordinal = 1))
+	@Inject(method = "use", at = @At("TAIL"))
 	private void fireworkUsageHandler(World world, PlayerEntity player, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> ci) {
 		if (ElytraSwap.CONFIG.useFireworks.getState() &&
 				player instanceof ServerPlayerEntity &&
