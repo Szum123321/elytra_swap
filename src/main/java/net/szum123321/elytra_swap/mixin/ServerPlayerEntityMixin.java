@@ -43,7 +43,8 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
 
 		if (ElytraSwap.serverSwapStateHandler.getSwapState(serverPlayerEntity) &&
 				(ServerSidePacketRegistry.INSTANCE.canPlayerReceive(serverPlayerEntity, ElytraSwap.DUMMY_PACKAGE) ||
-						ElytraSwap.CONFIG.noModPlayersHandlingMethod > 0)) {
+						ElytraSwap.CONFIG.noModPlayersHandlingMethod > 0) &&
+				ElytraSwap.CONFIG.globalSwapEnable.getState()) {
 
 			PlayerFallHandler.handleFalling(serverPlayerEntity, heightDifference, onGround);
 		}
