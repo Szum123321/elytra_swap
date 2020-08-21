@@ -43,11 +43,10 @@ public class PlayerManagerMixin {
                     new LiteralText("Hi! This server uses Elytra Swap mod, which partially alters elytra mechanics.\n")
                     .append("For more info see: ")
                     .append(new LiteralText("Elytra Swap wiki.")
-                            .styled(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/Szum123321/elytra_swap/wiki")))
+                            .styled(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://github.com/Szum123321/elytra_swap/wiki/Usage")))
                             .formatted(Formatting.UNDERLINE, Formatting.AQUA)
                     )
-                    , false
-            );
+                    , false);
         }
     }
 }
