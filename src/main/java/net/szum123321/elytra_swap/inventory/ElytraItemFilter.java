@@ -65,6 +65,8 @@ public class ElytraItemFilter {
                     .map(Registry.ITEM::get)
                     .filter(item -> item != defaultItem)
                     .collect(Collectors.toUnmodifiableSet());
+            
+            ElytraSwap.LOGGER.info("Found %d compatible items: %s", items.size(), items.stream().map(Registry.ITEM::getId).map(Identifier::toString).collect(Collectors.joining(", ")));
         } catch (IOException e) {
             ElytraSwap.LOGGER.error("Something went wrong while trying to read elytra ids list!", e);
             items = Set.of(Items.ELYTRA);
