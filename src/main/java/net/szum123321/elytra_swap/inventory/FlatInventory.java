@@ -26,6 +26,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -202,23 +203,10 @@ public class FlatInventory {
 		setItemStack(indexA, getItemStack(indexB));
 		setItemStack(indexB, temp);
 	}
-/*
-	public PlayerEntity getPlayer() {
-		return player;
-	}
 
-	public boolean hasItem(Item item) {
+	public boolean hasOne(Predicate<Item> predicate) {
 		for (int i = 0; i < slots.size(); i++) {
-			if (getItemStack(i).getItem() == item)
-				return true;
-		}
-
-		return false;
-	}
-*/
-	public boolean hasOne(Predicate<ItemStack> predicate) {
-		for (int i = 0; i < slots.size(); i++) {
-			if(predicate.test(getItemStack(i)))
+			if(predicate.test(getItemStack(i).getItem()))
 				return true;
 		}
 

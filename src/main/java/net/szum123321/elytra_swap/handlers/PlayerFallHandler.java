@@ -32,7 +32,7 @@ public class PlayerFallHandler {
 	public static void handleFalling(PlayerEntity player, double heightDifference, boolean onGround) {
 		FlatInventory flatInventory = new FlatInventory(player);
 
-		if (flatInventory.hasOne(itemStack -> ElytraSwap.elytraItemFilter.isElytraLike(itemStack.getItem()))) {  // this line checks if player has elytra
+		if (flatInventory.hasOne(ElytraSwap.elytraItemFilter::isElytraLike)) {  // this line checks if player has elytra
 			if (!onGround && !player.isClimbing() && !player.isTouchingWater()) {  //this line makes sure that player is in the air, is not climbing and is not swimming
 				if (heightDifference < 0 && getFallHeight(player) > 5) { // and here we check i player is falling down and there are at least 5 blocks of empty space below him
 					InventoryHelper.replaceChestplateWithElytra(flatInventory);

@@ -50,7 +50,7 @@ public abstract class FireworkItemMixin extends Item {
 				TakeoffHandler.checkSpaceOverPlayer(player, ElytraSwap.CONFIG.requiredHeightAbovePlayer) &&
 				ElytraSwap.serverSwapStateHandler.getSwapState(player) &&
 				(ServerSidePacketRegistry.INSTANCE.canPlayerReceive(player, ElytraSwap.DUMMY_PACKAGE) || ElytraSwap.CONFIG.noModPlayersHandlingMethod == 1) &&
-				new FlatInventory(player).hasOne(itemStack -> ElytraSwap.elytraItemFilter.isElytraLike(itemStack.getItem()))) {
+				new FlatInventory(player).hasOne(ElytraSwap.elytraItemFilter::isElytraLike)) {
 
 			TakeoffHandler.sendUpdate(world, player, hand);
 		}
