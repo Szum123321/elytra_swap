@@ -35,7 +35,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ElytraItemFilter {
@@ -60,15 +59,13 @@ public class ElytraItemFilter {
             final boolean isTrinketsLoaded = FabricLoader.getInstance().isModLoaded("trinkets");
 
             //noinspection unchecked
-            items = ImmutableSet.copyOf(
-                    ((List<ElytraLikeItemEntry>)gson.fromJson(new InputStreamReader(inputStream), type))
-                            .stream()
-                            .filter(entry -> entry.isTrinketCompatible() || !isTrinketsLoaded)
-                            .map(ElytraLikeItemEntry::getIdentifier)
-                            .map(Registry.ITEM::get)
-                            .filter(item -> item != defaultItem)
-                            .collect(Collectors.toSet())
-            );
+            items = ((List<ElytraLikeItemEntry>)gson.fromJson(new InputStreamReader(inputStream), type))
+                    .stream()
+                    .filter(entry -> entry.isTrinketCompatible() || !isTrinketsLoaded)
+                    .map(ElytraLikeItemEntry::getIdentifier)
+                    .map(Registry.ITEM::get)
+                    .filter(item -> item != defaultItem)
+                    .collect(ImmutableSet.toImmutableSet());
             
             ElytraSwap.LOGGER.info("Found %d compatible items: %s", items.size(), items.stream().map(Registry.ITEM::getId).map(Identifier::toString).collect(Collectors.joining(", ")));
         } catch (IOException e) {
