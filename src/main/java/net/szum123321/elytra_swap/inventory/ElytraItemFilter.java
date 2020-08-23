@@ -18,6 +18,7 @@
 
 package net.szum123321.elytra_swap.inventory;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import net.fabricmc.loader.api.FabricLoader;
@@ -31,19 +32,20 @@ import java.io.*;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ElytraItemFilter {
-    private Set<Item> items;
+    private ImmutableSet<Item> items;
 
     public ElytraItemFilter () {
         Path path;
 
         if(FabricLoader.getInstance().isDevelopmentEnvironment())
-            path = Path.of(getClass().getResource("/elytra_like_item_set.json").getPath());
+            path = Paths.get(getClass().getResource("/elytra_like_item_set.json").getPath());
         else
             path = FabricLoader.getInstance().getModContainer(ElytraSwap.MOD_ID).get().getRootPath().resolve("/elytra_like_item_set.json");
 
@@ -58,18 +60,20 @@ public class ElytraItemFilter {
             final boolean isTrinketsLoaded = FabricLoader.getInstance().isModLoaded("trinkets");
 
             //noinspection unchecked
-            items = ((List<ElytraLikeItemEntry>)gson.fromJson(new InputStreamReader(inputStream), type))
-                    .stream()
-                    .filter(entry -> entry.isTrinketCompatible() || !isTrinketsLoaded)
-                    .map(ElytraLikeItemEntry::getIdentifier)
-                    .map(Registry.ITEM::get)
-                    .filter(item -> item != defaultItem)
-                    .collect(Collectors.toUnmodifiableSet());
+            items = ImmutableSet.copyOf(
+                    ((List<ElytraLikeItemEntry>)gson.fromJson(new InputStreamReader(inputStream), type))
+                            .stream()
+                            .filter(entry -> entry.isTrinketCompatible() || !isTrinketsLoaded)
+                            .map(ElytraLikeItemEntry::getIdentifier)
+                            .map(Registry.ITEM::get)
+                            .filter(item -> item != defaultItem)
+                            .collect(Collectors.toSet())
+            );
             
             ElytraSwap.LOGGER.info("Found %d compatible items: %s", items.size(), items.stream().map(Registry.ITEM::getId).map(Identifier::toString).collect(Collectors.joining(", ")));
         } catch (IOException e) {
             ElytraSwap.LOGGER.error("Something went wrong while trying to read elytra ids list!", e);
-            items = Set.of(Items.ELYTRA);
+            items = ImmutableSet.of(Items.ELYTRA);
         }
     }
 
