@@ -54,12 +54,13 @@ public class ElytraItemFilter {
                 .registerTypeAdapter(Identifier.class, (JsonDeserializer<Identifier>) (json, typeOfT, context) -> new Identifier(json.getAsString().split(":")[0], json.getAsString().split(":")[1]))
                 .create();
 
-        try (InputStream inputStream = Files.newInputStream(path)) {
+        try (InputStream inputStream = Files.newInputStream(path);
+            InputStreamReader reader = new InputStreamReader(inputStream)) {
             final Item defaultItem = Registry.ITEM.get(Registry.ITEM.getDefaultId());
             final boolean isTrinketsLoaded = FabricLoader.getInstance().isModLoaded("trinkets");
 
             //noinspection unchecked
-            items = ((List<ElytraLikeItemEntry>)gson.fromJson(new InputStreamReader(inputStream), type))
+            items = ((List<ElytraLikeItemEntry>)gson.fromJson(reader, type))
                     .stream()
                     .filter(entry -> entry.isTrinketCompatible() || !isTrinketsLoaded)
                     .map(ElytraLikeItemEntry::getIdentifier)
