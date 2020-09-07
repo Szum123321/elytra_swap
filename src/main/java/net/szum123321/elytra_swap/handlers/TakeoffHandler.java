@@ -37,7 +37,7 @@ public class TakeoffHandler {
 		ServerSidePacketRegistry.INSTANCE.sendToPlayer(player,
 				new EntityVelocityUpdateS2CPacket(player.getEntityId(),
 						new Vec3d(-Math.sin(Math.toRadians(player.yaw)) * ElytraSwap.CONFIG.kickSpeed,
-								ElytraSwap.CONFIG.kickSpeed * (ElytraSwap.CONFIG.verticalMode.getState() ? -Math.sin(Math.toRadians(player.pitch)) : 1),
+								ElytraSwap.CONFIG.kickSpeed * (ElytraSwap.CONFIG.horizontalMode.getState() ? -Math.sin(Math.toRadians(player.pitch)) : 1),
 								Math.cos(Math.toRadians(player.yaw)) * ElytraSwap.CONFIG.kickSpeed
 						)
 				)
@@ -46,7 +46,7 @@ public class TakeoffHandler {
 		FireworkRocketEntity firework = new FireworkRocketEntity(player.world, player.getStackInHand(hand), player);
 		world.spawnEntity(firework);
 
-		if(ElytraSwap.CONFIG.verticalMode.getState()) {
+		if(ElytraSwap.CONFIG.horizontalMode.getState()) {
 			InventoryHelper.replaceChestplateWithElytra(new FlatInventory(player));
 			((EntitySetFlagInvoker)player).invokeSetFlag(7, false);
 		}

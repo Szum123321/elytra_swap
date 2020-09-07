@@ -48,9 +48,10 @@ public class ConfigHandler {
 					"Default: ENABLE\n")
 	public EnableDisableEnum noModPlayersDefaultState = EnableDisableEnum.ENABLE;
 
-
-	//TODO: Add description
-	public EnableDisableEnum verticalMode = EnableDisableEnum.DISABLE;
+	@Comment(value = "\nBy changing this to ENABLE, your pitch will also be taken into account when calculating kicking direction,\n" +
+						"which will case you to be thrown into the air at exactly the direction you're looking at.\n" +
+						"Default: DISABLE\n")
+	public EnableDisableEnum horizontalMode = EnableDisableEnum.DISABLE;
 
 	@Comment(value = "\nBy setting this to DISABLE, you can completely disable firework usage.\n" +
 					"Default: ENABLE\n")
