@@ -52,7 +52,7 @@ public class ConfigHandler {
 					"Default: ENABLE\n")
 	public EnableDisableEnum useFireworks = EnableDisableEnum.ENABLE;
 
-	@Comment(value = "\nBy setting this to DISABLE, you can completely disable firework usage.\n" +
+	@Comment(value = "\nBy setting this to DISABLE, you can completely disable swapping.\n" +
 			"Default: ENABLE\n")
 	public EnableDisableEnum globalSwapEnable = EnableDisableEnum.ENABLE;
 
