@@ -33,7 +33,7 @@ public class ConfigHandler {
 
 	@Comment(value = "\nThis is how much vertical speed player will gain as a result of using firework rocket.\n" +
 						"Default: 1.7\n")
-	public float kickSpeed = 2.5F;
+	public float kickSpeed = 1.7F;
 
 	@Comment(value = "\nMinimal height that player has to have above him in order to use firework.\n" +
 						"Default: 15\n")
@@ -48,9 +48,9 @@ public class ConfigHandler {
 					"Default: ENABLE\n")
 	public EnableDisableEnum noModPlayersDefaultState = EnableDisableEnum.ENABLE;
 
-
-	//TODO: Add description
-	public EnableDisableEnum verticalMode = EnableDisableEnum.DISABLE;
+	@Comment(value = "\nBy setting this to ENABLE, you can takeoff mostly vertically.\n" +
+					"Default: ENABLE\n")
+	public EnableDisableEnum verticalMode = EnableDisableEnum.ENABLE;
 
 	@Comment(value = "\nBy setting this to DISABLE, you can completely disable firework usage.\n" +
 					"Default: ENABLE\n")
@@ -60,7 +60,7 @@ public class ConfigHandler {
 			"Default: ENABLE\n")
 	public EnableDisableEnum globalSwapEnable = EnableDisableEnum.ENABLE;
 
-	@Comment(value = "\nIf this potion is set to true, than every time client, without Elytra Swap mod installed, joins the server will receive short note informing about this mod.\n")
+	@Comment(value = "\nIf this is set to true, than every time client, without Elytra Swap mod installed, joins the server will receive short note informing about this mod.\n")
 	public boolean sendInfoOnClientJoin = true;
 
 	public enum EnableDisableEnum {
