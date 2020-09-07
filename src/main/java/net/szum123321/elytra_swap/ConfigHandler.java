@@ -33,7 +33,7 @@ public class ConfigHandler {
 
 	@Comment(value = "\nThis is how much vertical speed player will gain as a result of using firework rocket.\n" +
 						"Default: 1.7\n")
-	public float kickSpeed = 1.7F;
+	public float kickSpeed = 2.5F;
 
 	@Comment(value = "\nMinimal height that player has to have above him in order to use firework.\n" +
 						"Default: 15\n")
@@ -48,6 +48,8 @@ public class ConfigHandler {
 					"Default: ENABLE\n")
 	public EnableDisableEnum noModPlayersDefaultState = EnableDisableEnum.ENABLE;
 
+
+	//TODO: Add description
 	public EnableDisableEnum verticalMode = EnableDisableEnum.DISABLE;
 
 	@Comment(value = "\nBy setting this to DISABLE, you can completely disable firework usage.\n" +
