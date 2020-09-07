@@ -30,18 +30,18 @@ import java.util.Scanner;
 public class ClientSwapStateHandler {
     private boolean state;
 
-    public boolean get(){
+    public boolean get() {
         return state;
     }
 
-    public void set (boolean val) {
+    public void set(boolean val) {
         state = val;
         save();
     }
 
     public void load() {
         try {
-            File file = FabricLoader.getInstance().getGameDirectory().toPath().resolve("data/" + ElytraSwap.MOD_ID + ".txt").toFile();
+            File file = FabricLoader.getInstance().getGameDir().resolve("data/" + ElytraSwap.MOD_ID + ".txt").toFile();
 
             if (!file.exists()) {
                 file.getParentFile().mkdirs();
@@ -61,7 +61,7 @@ public class ClientSwapStateHandler {
 
     private void save() {
         try {
-            File file = FabricLoader.getInstance().getGameDirectory().toPath().resolve("data/" + ElytraSwap.MOD_ID + ".txt").toFile();
+            File file = FabricLoader.getInstance().getGameDir().resolve("data/" + ElytraSwap.MOD_ID + ".txt").toFile();
 
             if (!file.exists()) {
                 file.getParentFile().mkdirs();
@@ -78,5 +78,4 @@ public class ClientSwapStateHandler {
             state = true;
         }
     }
-
 }
