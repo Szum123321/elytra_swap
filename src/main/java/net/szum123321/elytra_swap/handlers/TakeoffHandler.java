@@ -36,7 +36,7 @@ public class TakeoffHandler {
 		ServerSidePacketRegistry.INSTANCE.sendToPlayer(player,
 				new EntityVelocityUpdateS2CPacket(player.getEntityId(),
 						new Vec3d(-Math.sin(Math.toRadians(player.yaw)) * ElytraSwap.CONFIG.kickSpeed,
-								(ElytraSwap.CONFIG.verticalMode.getState() ? ElytraSwap.CONFIG.kickSpeed : -Math.sin(Math.toRadians(player.yaw)) * ElytraSwap.CONFIG.kickSpeed),
+								ElytraSwap.CONFIG.kickSpeed * (ElytraSwap.CONFIG.verticalMode.getState() ? -Math.sin(Math.toRadians(player.pitch)) : 1),
 								Math.cos(Math.toRadians(player.yaw)) * ElytraSwap.CONFIG.kickSpeed
 						)
 				)
