@@ -28,6 +28,8 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.szum123321.elytra_swap.ElytraSwap;
+import net.szum123321.elytra_swap.inventory.FlatInventory;
+import net.szum123321.elytra_swap.inventory.InventoryHelper;
 
 public class TakeoffHandler {
 	public static void sendUpdate(World world, PlayerEntity player, Hand hand) {
@@ -42,6 +44,9 @@ public class TakeoffHandler {
 
 		FireworkRocketEntity firework = new FireworkRocketEntity(player.world, player.getStackInHand(hand), player);
 		world.spawnEntity(firework);
+
+		if(ElytraSwap.CONFIG.verticalMode.getState())
+			InventoryHelper.replaceChestplateWithElytra(new FlatInventory(player));
 
 		if (!player.isCreative())
 			player.getStackInHand(hand).decrement(1);
