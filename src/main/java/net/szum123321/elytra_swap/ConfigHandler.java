@@ -25,9 +25,9 @@ import io.github.cottonmc.cotton.config.annotations.ConfigFile;
 @ConfigFile(name = ElytraSwap.MOD_ID)
 public class ConfigHandler {
 	@Comment(value = "\nChanges how server treats players without mod installed\n" +
-			"0: players without Elytra Swap installed are just ignored\n" +
-			"1 (default): players without Elytra Swap installed will be kicked into air, armor change will be forced and can only be enabled or disabled by command\n" +
-			"2: for players without Elytra Swap installed, armor still will be changed when falling but firework usage will be unavailable.\n"
+						"0: players without Elytra Swap installed are just ignored\n" +
+						"1 (default): players without Elytra Swap installed will be kicked into air, armor change will be forced and can only be enabled or disabled by command\n" +
+						"2: for players without Elytra Swap installed, armor still will be changed when falling but firework usage will be unavailable.\n"
 	)
 	public int noModPlayersHandlingMethod = 1;
 
@@ -44,8 +44,8 @@ public class ConfigHandler {
 	public boolean lookThroughShulkers = true;
 
 	@Comment(value = "\nThis is the default state, that would be given to the players which do not have Elytra Swap installed.\n" +
-					"Available: ENABLE, DISABLE\n" +
-					"Default: ENABLE\n")
+						"Available: ENABLE, DISABLE\n" +
+						"Default: ENABLE\n")
 	public EnableDisableEnum noModPlayersDefaultState = EnableDisableEnum.ENABLE;
 
 	@Comment(value = "\nBy changing this to ENABLE, your pitch will also be taken into account when calculating kicking direction,\n" +
@@ -54,11 +54,11 @@ public class ConfigHandler {
 	public EnableDisableEnum horizontalMode = EnableDisableEnum.DISABLE;
 
 	@Comment(value = "\nBy setting this to DISABLE, you can completely disable firework usage.\n" +
-					"Default: ENABLE\n")
+						"Default: ENABLE\n")
 	public EnableDisableEnum useFireworks = EnableDisableEnum.ENABLE;
 
 	@Comment(value = "\nBy setting this to DISABLE, you can completely disable swapping.\n" +
-			"Default: ENABLE\n")
+						"Default: ENABLE\n")
 	public EnableDisableEnum globalSwapEnable = EnableDisableEnum.ENABLE;
 
 	@Comment(value = "\nIf this potion is set to true, than every time client, without Elytra Swap mod installed, joins the server will receive short note informing about this mod.\n")
