@@ -18,6 +18,7 @@
 
 package net.szum123321.elytra_swap.inventory;
 
+import com.google.common.collect.ImmutableList;
 import dev.emi.trinkets.api.Slots;
 import dev.emi.trinkets.api.TrinketSlots;
 import dev.emi.trinkets.api.TrinketsApi;
@@ -47,7 +48,7 @@ import java.util.function.Predicate;
 */
 public class FlatInventory {
 	private final boolean trinketsSupport;
-	private final List<Slot> slots = new ArrayList<>();
+	private final ImmutableList<Slot> slots;
 	private final Map<SpecialSlots, Integer> specialSlots = new HashMap<>();
 	private final PlayerEntity player;
 
@@ -56,22 +57,24 @@ public class FlatInventory {
 		this.trinketsSupport = ElytraSwap.hasTrinkets &&
 								(ElytraSwap.serverSwapStateHandler.getTrinketsSupport(player) == ServerSwapStateHandler.Tristate.TRUE);
 
+		List<Slot> builder = new ArrayList<>();
+
 		for (int i = 0; i < player.inventory.size(); i++) {
 			if (i == 38) { //Chestplate slot
-				specialSlots.put(SpecialSlots.CHESTPLATE, slots.size());
+				specialSlots.put(SpecialSlots.CHESTPLATE, builder.size());
 
 				if(player.inventory.getStack(i).isEmpty())  // so that this slot gets added if it is empty
-					slots.add(new Slot(InventoryType.VANILLA, i));
+					builder.add(new Slot(InventoryType.VANILLA, i));
 			}
 
 			if(!player.inventory.getStack(i).isEmpty())
-				slots.add(new Slot(InventoryType.VANILLA, i));
+				builder.add(new Slot(InventoryType.VANILLA, i));
 
 			if (player.inventory.getStack(i).getItem() instanceof BlockItem &&
 					((BlockItem) player.inventory.getStack(i).getItem()).getBlock() instanceof ShulkerBoxBlock &&
 					ElytraSwap.CONFIG.lookThroughShulkers) {
 				for (int j = 0; j < 27; j++)
-					slots.add(new Slot(InventoryType.VANILLA, i, j));
+					builder.add(new Slot(InventoryType.VANILLA, i, j));
 			}
 		}
 
@@ -80,23 +83,25 @@ public class FlatInventory {
 
 			for (int i = 0; i < TrinketSlots.getSlotCount(); i++) {
 				if (TrinketSlots.getAllSlots().get(i).getName().equals(Slots.CAPE)) {
-					specialSlots.put(SpecialSlots.CAPE, slots.size());
+					specialSlots.put(SpecialSlots.CAPE, builder.size());
 
 					if(TrinketsApi.getTrinketsInventory(player).getStack(i).isEmpty())
-						slots.add(new Slot(InventoryType.TRINKETS, i));
+						builder.add(new Slot(InventoryType.TRINKETS, i));
 				}
 
 				if(!TrinketsApi.getTrinketsInventory(player).getStack(i).isEmpty())
-					slots.add(new Slot(InventoryType.TRINKETS, i));
+					builder.add(new Slot(InventoryType.TRINKETS, i));
 
 				if (tInv.getStack(i).getItem() instanceof BlockItem &&
 						((BlockItem) tInv.getStack(i).getItem()).getBlock() instanceof ShulkerBoxBlock &&
 						ElytraSwap.CONFIG.lookThroughShulkers) {
 					for (int j = 0; j < 27; j++)
-						slots.add(new Slot(InventoryType.TRINKETS, i, j));
+						builder.add(new Slot(InventoryType.TRINKETS, i, j));
 				}
 			}
 		}
+
+		slots = ImmutableList.copyOf(builder);
 	}
 
 	public int getSize() {
@@ -147,6 +152,13 @@ public class FlatInventory {
 		}
 	}
 
+	/**
+	 * Keep in mind that any modification applied onto returned ItemStack may not actually be saved.<br>
+	 * You <b>ALWAYS</b> have to call {@link #setItemStack(int, net.minecraft.item.ItemStack)} afterwards!
+	 * @param index index of the slot
+	 * @return {@link net.minecraft.item.ItemStack}
+	 * @throws IndexOutOfBoundsException when index < 0 and index >= {@link #getSize()}
+	 */
 	public ItemStack getItemStack(int index) throws IndexOutOfBoundsException {
 		if (index >= slots.size() || index < 0)
 			throw new IndexOutOfBoundsException("Called getItemStack with index = " + index +
