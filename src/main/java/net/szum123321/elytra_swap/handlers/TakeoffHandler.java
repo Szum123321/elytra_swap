@@ -36,9 +36,9 @@ public class TakeoffHandler {
 	public static void sendUpdate(World world, PlayerEntity player, Hand hand) {
 		ServerSidePacketRegistry.INSTANCE.sendToPlayer(player,
 				new EntityVelocityUpdateS2CPacket(player.getEntityId(),
-						new Vec3d(-Math.sin(Math.toRadians(player.yaw)) * ElytraSwap.CONFIG.kickSpeed,
+						new Vec3d(ElytraSwap.CONFIG.kickSpeed * -Math.sin(Math.toRadians(player.yaw)),
 								ElytraSwap.CONFIG.kickSpeed * (ElytraSwap.CONFIG.horizontalMode.getState() ? -Math.sin(Math.toRadians(player.pitch)) : 1),
-								Math.cos(Math.toRadians(player.yaw)) * ElytraSwap.CONFIG.kickSpeed
+								ElytraSwap.CONFIG.kickSpeed * Math.cos(Math.toRadians(player.yaw))
 						)
 				)
 		);
@@ -46,13 +46,16 @@ public class TakeoffHandler {
 		FireworkRocketEntity firework = new FireworkRocketEntity(player.world, player.getStackInHand(hand), player);
 		world.spawnEntity(firework);
 
-		if(ElytraSwap.CONFIG.horizontalMode.getState()) {
+		if(ElytraSwap.CONFIG.horizontalMode.getState() && ElytraSwap.CONFIG.globalSwapEnable.getState() ) {
 			InventoryHelper.replaceChestplateWithElytra(new FlatInventory(player));
 			((EntitySetFlagInvoker)player).invokeSetFlag(7, false);
 		}
 
 		if (!player.isCreative())
 			player.getStackInHand(hand).decrement(1);
+		
+		if(ElytraSwap.CONFIG.horizontalMode.getState() )//this might be too fast, the player might not be in the air yet. might have to send in packet.
+			player.jump();//I believe this would work as opposed to .setJumping(true), could be wrong. 		
 	}
 
 	public static boolean checkSpaceOverPlayer(PlayerEntity player, int requiredHeight) {
