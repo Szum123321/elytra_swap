@@ -33,12 +33,13 @@ import net.szum123321.elytra_swap.inventory.InventoryHelper;
 import net.szum123321.elytra_swap.mixin.EntitySetFlagInvoker;
 
 public class TakeoffHandler {
+	static float takeoffSpeed = ElytraSwap.CONFIG.kickSpeed * (ElytraSwap.CONFIG.horizontalMode.getState() ? 0.5F : 1);//performed once instead of every time.
 	public static void sendUpdate(World world, PlayerEntity player, Hand hand) {
 		ServerSidePacketRegistry.INSTANCE.sendToPlayer(player,
 				new EntityVelocityUpdateS2CPacket(player.getEntityId(),
-						new Vec3d(ElytraSwap.CONFIG.kickSpeed * -Math.sin(Math.toRadians(player.yaw)),
-								ElytraSwap.CONFIG.kickSpeed * (ElytraSwap.CONFIG.horizontalMode.getState() ? -Math.sin(Math.toRadians(player.pitch)) : 1),
-								ElytraSwap.CONFIG.kickSpeed * Math.cos(Math.toRadians(player.yaw))
+						new Vec3d(takeoffSpeed * -Math.sin(Math.toRadians(player.yaw)),
+								takeoffSpeed * -Math.sin(Math.toRadians(player.pitch)),
+								takeoffSpeed * Math.cos(Math.toRadians(player.yaw))
 						)
 				)
 		);
@@ -46,7 +47,7 @@ public class TakeoffHandler {
 		FireworkRocketEntity firework = new FireworkRocketEntity(player.world, player.getStackInHand(hand), player);
 		world.spawnEntity(firework);
 
-		if(ElytraSwap.CONFIG.horizontalMode.getState() && ElytraSwap.CONFIG.globalSwapEnable.getState() ) {
+		if(ElytraSwap.CONFIG.globalSwapEnable.getState() && ElytraSwap.CONFIG.horizontalMode.getState()) {
 			InventoryHelper.replaceChestplateWithElytra(new FlatInventory(player));
 			((EntitySetFlagInvoker)player).invokeSetFlag(7, false);
 		}
