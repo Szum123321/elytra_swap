@@ -33,12 +33,14 @@ import net.szum123321.elytra_swap.inventory.InventoryHelper;
 import net.szum123321.elytra_swap.mixin.EntitySetFlagInvoker;
 
 public class TakeoffHandler {
-	static float takeoffSpeed = ElytraSwap.CONFIG.kickSpeed * (ElytraSwap.CONFIG.horizontalMode.getState() ? 0.5F : 1);//performed once instead of every time.
 	public static void sendUpdate(World world, PlayerEntity player, Hand hand) {
+		float takeoffSpeed = ElytraSwap.CONFIG.kickSpeed;
+		if (ElytraSwap.CONFIG.horizontalMode.getState()) 
+			takeoffSpeed = takeoffSpeed * 0.5F;
 		ServerSidePacketRegistry.INSTANCE.sendToPlayer(player,
 				new EntityVelocityUpdateS2CPacket(player.getEntityId(),
 						new Vec3d(takeoffSpeed * -Math.sin(Math.toRadians(player.yaw)),
-								takeoffSpeed * -Math.sin(Math.toRadians(player.pitch)),
+								takeoffSpeed,
 								takeoffSpeed * Math.cos(Math.toRadians(player.yaw))
 						)
 				)
