@@ -23,7 +23,6 @@ import net.minecraft.util.math.BlockPos;
 import net.szum123321.elytra_swap.ElytraSwap;
 import net.szum123321.elytra_swap.inventory.FlatInventory;
 import net.szum123321.elytra_swap.inventory.InventoryHelper;
-import net.szum123321.elytra_swap.mixin.EntitySetFlagInvoker;
 
 /*
 	This class takes care of checking if we should swap elytra or not.
@@ -36,11 +35,11 @@ public class PlayerFallHandler {
 			if (!onGround && !player.isClimbing() && !player.isTouchingWater()) {  //this line makes sure that player is in the air, is not climbing and is not swimming
 				if (heightDifference < 0 && getFallHeight(player) > 5) { // and here we check i player is falling down and there are at least 5 blocks of empty space below him
 					InventoryHelper.replaceChestplateWithElytra(flatInventory);
-					((EntitySetFlagInvoker)player).invokeSetFlag(7, true);    // thanks to this line you do not have to press space in order to start gliding
+					player.startFallFlying();   // thanks to this line you do not have to press space in order to start gliding
 				}
 			} else {
 				InventoryHelper.replaceElytraWithChestplate(flatInventory);
-				((EntitySetFlagInvoker)player).invokeSetFlag(7, false);
+				player.stopFallFlying();
 			}
 		}
 	}

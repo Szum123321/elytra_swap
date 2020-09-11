@@ -30,7 +30,6 @@ import net.minecraft.world.World;
 import net.szum123321.elytra_swap.ElytraSwap;
 import net.szum123321.elytra_swap.inventory.FlatInventory;
 import net.szum123321.elytra_swap.inventory.InventoryHelper;
-import net.szum123321.elytra_swap.mixin.EntitySetFlagInvoker;
 
 public class TakeoffHandler {
 	public static void sendUpdate(World world, PlayerEntity player, Hand hand) {
@@ -43,19 +42,22 @@ public class TakeoffHandler {
 				)
 		);
 
-		FireworkRocketEntity firework = new FireworkRocketEntity(player.world, player.getStackInHand(hand), player);
-		world.spawnEntity(firework);
+		world.spawnEntity(new FireworkRocketEntity(world, player.getStackInHand(hand), player));
 
 		if(ElytraSwap.CONFIG.horizontalMode.getState()) {
-			InventoryHelper.replaceChestplateWithElytra(new FlatInventory(player));
-			((EntitySetFlagInvoker)player).invokeSetFlag(7, false);
+			if(ElytraSwap.CONFIG.globalSwapEnable.getState()) {
+				InventoryHelper.replaceChestplateWithElytra(new FlatInventory(player));
+				player.startFallFlying();
+			}
+
+			player.jump();
 		}
 
 		if (!player.isCreative())
 			player.getStackInHand(hand).decrement(1);
 	}
 
-	public static boolean checkSpaceOverPlayer(PlayerEntity player, int requiredHeight) {
+	private static boolean checkSpaceOverPlayer(PlayerEntity player, int requiredHeight) {
 		BlockPos.Mutable blockPos = player.getBlockPos().mutableCopy();
 
 		for (int i = 2; i <= requiredHeight; i++) {
