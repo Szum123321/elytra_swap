@@ -33,6 +33,9 @@ import net.szum123321.elytra_swap.inventory.InventoryHelper;
 
 public class TakeoffHandler {
 	public static void sendUpdate(World world, PlayerEntity player, Hand hand) {
+		if(!ElytraSwap.CONFIG.horizontalMode.getState() && !checkSpaceOverPlayer(player, ElytraSwap.CONFIG.requiredHeightAbovePlayer))
+			return;
+
 		ServerSidePacketRegistry.INSTANCE.sendToPlayer(player,
 				new EntityVelocityUpdateS2CPacket(player.getEntityId(),
 						new Vec3d(-Math.sin(Math.toRadians(player.yaw)) * ElytraSwap.CONFIG.kickSpeed,
@@ -52,9 +55,6 @@ public class TakeoffHandler {
 
 			player.jump();
 		}
-
-		if (!player.isCreative())
-			player.getStackInHand(hand).decrement(1);
 	}
 
 	private static boolean checkSpaceOverPlayer(PlayerEntity player, int requiredHeight) {
