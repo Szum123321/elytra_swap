@@ -32,7 +32,7 @@ import net.szum123321.elytra_swap.inventory.FlatInventory;
 import net.szum123321.elytra_swap.inventory.InventoryHelper;
 
 public class TakeoffHandler {
-	public static void sendUpdate(World world, PlayerEntity player, Hand hand) {
+	public static void sendUpdate(World world, PlayerEntity player, Hand hand) extends Thread {
 
 		float takeoffSpeed = ElytraSwap.CONFIG.kickSpeed;
 		if (ElytraSwap.CONFIG.horizontalMode.getState()) 
@@ -57,7 +57,7 @@ public class TakeoffHandler {
 				InventoryHelper.replaceChestplateWithElytra(new FlatInventory(player));
 				player.startFallFlying();
 			}
-
+			try{Thread.sleep(110);}catch(InterruptedException e){System.out.println(e);}  
 			player.jump();
 		}
     if (!player.isCreative())
