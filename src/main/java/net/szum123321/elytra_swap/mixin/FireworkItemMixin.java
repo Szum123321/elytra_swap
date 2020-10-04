@@ -28,6 +28,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import net.szum123321.elytra_swap.ElytraSwap;
+import net.szum123321.elytra_swap.helpers.PlayerHelper;
 import net.szum123321.elytra_swap.inventory.FlatInventory;
 import net.szum123321.elytra_swap.handlers.TakeoffHandler;
 import org.spongepowered.asm.mixin.Mixin;
@@ -46,14 +47,15 @@ public abstract class FireworkItemMixin extends Item {
 	private void fireworkUsageHandler(World world, PlayerEntity player, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> ci) {
 		if (ElytraSwap.CONFIG.useFireworks.getState() &&
 				player instanceof ServerPlayerEntity &&
-				player.isOnGround() &&
+				(player.isOnGround() || PlayerHelper.isOnSurfaceOfWater(world, player)) &&
 				ElytraSwap.serverSwapStateHandler.getSwapState(player) &&
 				(ServerSidePacketRegistry.INSTANCE.canPlayerReceive(player, ElytraSwap.DUMMY_PACKAGE) || ElytraSwap.CONFIG.noModPlayersHandlingMethod == 1) &&
 				new FlatInventory(player).hasOne(ElytraSwap.elytraItemFilter::isElytraLike)) {
 
 			TakeoffHandler.sendUpdate(world, player, hand);
 
-			player.getStackInHand(hand).decrement(1);
+			if(!player.isCreative())
+				player.getStackInHand(hand).decrement(1);
 
 			ci.setReturnValue(TypedActionResult.consume(player.getStackInHand(hand)));
 		}
