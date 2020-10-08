@@ -27,3 +27,5 @@ Things to keep in mind:
  * This is Fabric mod. If you don't know what Fabric is, or how to use it, than go and read [Fabric's web page](https://fabricmc.net/)
  * Third party libraries included are: [cotton-config and cotton-logging](https://github.com/CottonMC/Cotton), [Jankson-fabric](https://github.com/CottonMC/Jankson-Fabric)
  * If you find any problem, or would like to see a new feature added to this mod, please go to [Github](https://github.com/Szum123321/elytra_swap/issues) and create an issue.
+
+And here's a link to my [discord channel](https://discord.gg/ktasEy4) 
