@@ -29,3 +29,8 @@ Things to keep in mind:
  * If you find any problem, or would like to see a new feature added to this mod, please go to [Github](https://github.com/Szum123321/elytra_swap/issues) and create an issue.
 
 And here's a link to my [discord channel](https://discord.gg/ktasEy4) 
+
+
+If you'd like to support me:  
+[![Donate with Bitcoin](https://en.cryptobadges.io/badge/micro/bc1qwnqrdv5rs36tkfgxmnkw5f7qx4nhsncy5kj69s)](https://en.cryptobadges.io/donate/bc1qwnqrdv5rs36tkfgxmnkw5f7qx4nhsncy5kj69s)
+[![Donate with Ethereum](https://en.cryptobadges.io/badge/micro/0xF196c12b0A013d91015c541E63A87BA636851871)](https://en.cryptobadges.io/donate/0xF196c12b0A013d91015c541E63A87BA636851871)
