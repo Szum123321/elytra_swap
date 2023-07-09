@@ -32,15 +32,20 @@ import net.szum123321.elytra_swap.inventory.FlatInventory;
 import net.szum123321.elytra_swap.inventory.InventoryHelper;
 
 public class TakeoffHandler {
-	public static void sendUpdate(World world, PlayerEntity player, Hand hand) {
+	public static void sendUpdate(World world, PlayerEntity player, Hand hand) extends Thread {
+
+		float takeoffSpeed = ElytraSwap.CONFIG.kickSpeed;
+		if (ElytraSwap.CONFIG.horizontalMode.getState()) 
+			takeoffSpeed = takeoffSpeed * 0.5F;
+
 		if(!ElytraSwap.CONFIG.horizontalMode.getState() && !checkSpaceOverPlayer(player, ElytraSwap.CONFIG.requiredHeightAbovePlayer))
 			return;
 
 		ServerSidePacketRegistry.INSTANCE.sendToPlayer(player,
 				new EntityVelocityUpdateS2CPacket(player.getEntityId(),
-						new Vec3d(-Math.sin(Math.toRadians(player.yaw)) * ElytraSwap.CONFIG.kickSpeed,
-								ElytraSwap.CONFIG.kickSpeed * (ElytraSwap.CONFIG.horizontalMode.getState() ? -Math.sin(Math.toRadians(player.pitch)) : 1),
-								Math.cos(Math.toRadians(player.yaw)) * ElytraSwap.CONFIG.kickSpeed
+						new Vec3d(takeoffSpeed * -Math.sin(Math.toRadians(player.yaw)),
+								takeoffSpeed,
+								takeoffSpeed * Math.cos(Math.toRadians(player.yaw))
 						)
 				)
 		);
@@ -52,9 +57,11 @@ public class TakeoffHandler {
 				InventoryHelper.replaceChestplateWithElytra(new FlatInventory(player));
 				player.startFallFlying();
 			}
-
+			try{Thread.sleep(110);}catch(InterruptedException e){System.out.println(e);}  
 			player.jump();
 		}
+    if (!player.isCreative())
+			player.getStackInHand(hand).decrement(1);
 	}
 
 	private static boolean checkSpaceOverPlayer(PlayerEntity player, int requiredHeight) {
